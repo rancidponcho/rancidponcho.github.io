@@ -3,7 +3,7 @@ class Platform {
     this.body = Matter.Bodies.rectangle(
       render.options.width * 0.5,
       render.options.height * INV_GOLDEN,
-      render.options.width * HALF_INV_GOLDEN,
+      render.options.width * INV_GOLDEN,
       render.options.height * 0.1,
       {
         isStatic: true,
@@ -25,7 +25,7 @@ class Platform {
   resize() {
     const currentWidth = this.body.bounds.max.x - this.body.bounds.min.x;
     const currentHeight = this.body.bounds.max.y - this.body.bounds.min.y;
-    const newWidth = render.options.width * HALF_INV_GOLDEN;
+    const newWidth = render.options.width * INV_GOLDEN;
     const newHeight = render.options.height * 0.1;
     const widthRatio = newWidth / currentWidth;
     const heightRatio = newHeight / currentHeight;
@@ -34,7 +34,6 @@ class Platform {
       y: render.options.height * INV_GOLDEN,
     });
     Matter.Body.scale(this.body, widthRatio, heightRatio);
-    
   }
 }
 
