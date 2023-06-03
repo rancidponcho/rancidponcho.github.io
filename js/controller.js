@@ -23,6 +23,19 @@ class Controller {
       this.wheelEvent(e);
     });
 
+    // fade out on press
+    // pc
+    const about = document.getElementById("about");
+    about.addEventListener("click", () => {
+      about.classList.add("fade-out");
+      about.classList.add("no-pointer-events");
+    });
+    // mobile
+    about.addEventListener("touchstart", () => {
+      about.classList.add("fade-out");
+      about.classList.add("no-pointer-events");
+    });
+
     // setup resize event
     window.addEventListener("resize", () => {
       this.matterContainer.scrollLeft = this.scrollProportion * this.matterContainer.scrollWidth;
@@ -32,11 +45,12 @@ class Controller {
   wheelEvent(e) {
     e.preventDefault();
 
-      let newTop = parseInt(this.articleContainer.style.top) - e.deltaY;                            // calculate new top position of the article container.
-      let maxScrollTop = this.articleContainer.scrollHeight - this.articleContainer.clientHeight;   // dont scroll past the end or the start of the article.
-      if (newTop <= 0 && newTop >= -maxScrollTop) {
-        this.articleContainer.style.top = newTop + "px";
-      } 
+    let newTop = parseInt(this.articleContainer.style.top) - e.deltaY; // calculate new top position of the article container.
+    let maxScrollTop =
+      this.articleContainer.scrollHeight - this.articleContainer.clientHeight; // dont scroll past the end or the start of the article.
+    if (newTop <= 0 && newTop >= -maxScrollTop) {
+      this.articleContainer.style.top = newTop + "px";
+    }
 
     // save the new article position to key
     this.selectedPoly.articlePos = this.articleContainer.style.top;
@@ -81,7 +95,8 @@ class Controller {
         B = 0;
         C = 100;
       }
-      let magnitude = A * Math.exp(-Math.pow(distance - B, 2) / (2 * Math.pow(C, 2))); // Gaussian function
+      let magnitude =
+        A * Math.exp(-Math.pow(distance - B, 2) / (2 * Math.pow(C, 2))); // Gaussian function
       // let forceMagnitude = 0.0005 * Math.exp(-0.025 * distance); // exponential decay
 
       Matter.Body.applyForce(body, body.position, {

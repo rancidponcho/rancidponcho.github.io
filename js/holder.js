@@ -51,7 +51,6 @@ class Holder {
       if (this.angularForce(polygon, distance)) {
         // apply angular force
         this.displayArticle(polygon.articleID);
-        navigator.vibrate([200, 100, 200]);
       }
     } else {
       this.removeArticle();

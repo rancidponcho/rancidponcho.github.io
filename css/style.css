@@ -18,7 +18,7 @@ body {
 
 #about {
   position: absolute;
-  pointer-events: none;
+  /* pointer-events: none; */
   background-color: transparent;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -42,4 +42,13 @@ body {
   white-space: normal;
   font-family: Consolas, monaco, monospace;
   color: blue;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.no-pointer-events {
+  pointer-events: none;
 }
