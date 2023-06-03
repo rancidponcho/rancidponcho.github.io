@@ -27,6 +27,7 @@ body {
   width: 61.8%;
   left: 19.1%;
   top: 33%;
+  pointer-events: none;
 }
 
 #article-container {

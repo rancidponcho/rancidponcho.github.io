@@ -18,40 +18,74 @@ class Controller {
     Matter.World.add(engine.world, this.mouseConstraint);
 
     // scroll
+    // pc
     this.articleContainer.style.top = "0px";
     this.matterContainer.addEventListener("wheel", (e) => {
-      this.wheelEvent(e);
+      e.preventDefault();
+
+      let newTop = parseInt(this.articleContainer.style.top) - e.deltaY; // calculate new top position of the article container.
+      let maxScrollTop =
+        this.articleContainer.scrollHeight - this.articleContainer.clientHeight; // dont scroll past the end or the start of the article.
+      if (newTop <= 0 && newTop >= -maxScrollTop) {
+        this.articleContainer.style.top = newTop + "px";
+      }
+      // save the new article position to key
+      this.selectedPoly.articlePos = this.articleContainer.style.top;
+    });
+    // mobile
+    let startY; // variable to store the starting touch position
+
+    // add touchstart event listener to store the starting touch position
+    this.articleContainer.addEventListener("touchstart", (e) => {
+      startY = e.touches[0].clientY;
+    });
+
+    // add touchmove event listener to update the position of the article container
+    this.articleContainer.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      let deltaY = startY - e.touches[0].clientY; // calculate the change in touch position
+      let newTop = parseInt(this.articleContainer.style.top) - deltaY; // calculate new top position of the article container
+      let maxScrollTop =
+        this.articleContainer.scrollHeight - this.articleContainer.clientHeight; // don't scroll past the end or the start of the article
+      if (newTop <= 0 && newTop >= -maxScrollTop) {
+        this.articleContainer.style.top = newTop + "px";
+      }
+      // save the new article position to key
+      this.selectedPoly.articlePos = this.articleContainer.style.top;
     });
 
     // fade out on press
     // pc
     const about = document.getElementById("about");
-    about.addEventListener("click", () => {
+    const container = document.getElementById("container");
+    container.addEventListener("mousedown", () => {
       about.classList.add("fade-out");
       about.classList.add("no-pointer-events");
+      container.removeEventListener("mousedown", () => {});
     });
     // mobile
-    about.addEventListener("touchstart", () => {
+    container.addEventListener("touchstart", () => {
       about.classList.add("fade-out");
       about.classList.add("no-pointer-events");
+      container.removeEventListener("touchstart", () => {});
     });
 
     // setup resize event
     window.addEventListener("resize", () => {
-      this.matterContainer.scrollLeft = this.scrollProportion * this.matterContainer.scrollWidth;
+      this.matterContainer.scrollLeft =
+        this.scrollProportion * this.matterContainer.scrollWidth;
     });
   }
 
-  wheelEvent(e) {
+  scrollEvent() {
     e.preventDefault();
-
-    let newTop = parseInt(this.articleContainer.style.top) - e.deltaY; // calculate new top position of the article container.
+    let deltaY = startY - e.touches[0].clientY; // calculate the change in touch position
+    let newTop = parseInt(this.articleContainer.style.top) - deltaY; // calculate new top position of the article container
     let maxScrollTop =
-      this.articleContainer.scrollHeight - this.articleContainer.clientHeight; // dont scroll past the end or the start of the article.
+      this.articleContainer.scrollHeight - this.articleContainer.clientHeight; // don't scroll past the end or the start of the article
     if (newTop <= 0 && newTop >= -maxScrollTop) {
       this.articleContainer.style.top = newTop + "px";
     }
-
     // save the new article position to key
     this.selectedPoly.articlePos = this.articleContainer.style.top;
   }

@@ -4,10 +4,18 @@ class Holder {
     this.render = render;
     this.body = null;
     this.article = "";
+    this.isHolding = false;
+    this.selectedKey = null;
   }
 
   beforeUpdate(controller) {
-    var polygon = controller.selectedPoly;
+    let polygon;
+    if (this.isHolding) {
+      polygon = this.selectedKey;
+    } else {
+      polygon = controller.selectedPoly;
+    }
+
     if (!polygon || polygon === this.body) {
       // if no polygon or polygon is the same
       return;
@@ -31,7 +39,7 @@ class Holder {
           strokeStyle: "#808080",
           lineWidth: 5,
           opacity: 1,
-        }, // Change fillStyle to '#ls808080' for grey
+        },
         isStatic: true,
         isSensor: true,
       }
@@ -52,10 +60,14 @@ class Holder {
         // apply angular force
         this.displayArticle(polygon.articleID);
         platform.hide();
+        this.isHolding = true;
+        this.selectedKey = polygon;
       }
     } else {
       this.removeArticle();
       platform.show();
+      this.isHolding = false;
+      this.selectedKey = null;
     }
   }
 
