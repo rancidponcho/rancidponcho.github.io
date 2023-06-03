@@ -35,10 +35,9 @@ body {
   position: absolute;
   pointer-events: none;
   background-color: transparent;
-  /* width: 50%;
+  width: 61%; /* inv golden */
   height: 75%;
-  left: 25%; */
-  padding: 0 20px;
+  left: 19.5%; /* half inv golden remainder */
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
