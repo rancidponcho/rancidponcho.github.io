@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#container {
+  position: relative;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+
+#canvas {
+  width: 50%;
+  height: 100%;
+  background-color: #0f0;
+  overflow-y: hidden;
+}
+
+#about {
+  position: absolute;
+  pointer-events: none;
+  background-color: transparent;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  font-family: Consolas, monaco, monospace;
+  color: blue;
+  width: 50%;
+  top: 25%;
+  left: 25%;
+}
+
+#article-container {
+  position: absolute;
+  pointer-events: none;
+  background-color: transparent;
+  width: 50%;
+  height: 75%;
+  left: 125%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  font-family: Consolas, monaco, monospace;
+  color: blue;
+
+}

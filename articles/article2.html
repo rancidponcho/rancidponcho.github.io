@@ -1,0 +1,107 @@
+<article>
+  <h1>Understanding a Neural Network Node Implementation in C++</h1>
+  <p>2023-05-22</p>
+  <p>
+    The presented C++ code provides an implementation of a node in a neural
+    network. This article delves into the details of this implementation,
+    breaking down the underlying concepts, the design of the code, and its
+    purpose.
+  </p>
+  <h4>Background</h4>
+  <p>
+    Neural networks are a subfield of artificial intelligence inspired by the
+    human brain's structure. They consist of interconnected nodes, often called
+    neurons or units, which process and pass on information in a layered
+    structure. Each node receives inputs from nodes in the previous layer,
+    applies weights to these inputs, adds a bias term, and then applies a
+    non-linear activation function to produce an output.
+  </p>
+  <p>
+    The process of learning in a neural network involves adjusting the weights
+    and biases using an optimization algorithm, typically gradient descent or a
+    variant thereof, based on the error computed from the difference between the
+    actual and predicted outputs. The process of computing this error and
+    propagating it back through the network to adjust the weights and biases is
+    called backpropagation.
+  </p>
+  <h4>Code Overview</h4>
+  <p>
+    The provided code encompasses two main files: main.cpp, which contains the
+    main function and uses the Value class defined in value.hpp, and value.hpp,
+    which contains the definition of the Value class.
+  </p>
+  <h5>The Value Class</h5>
+  <p>
+    The Value class represents a node in a neural network. Each instance of the
+    Value class contains properties that define a neural network node:
+  </p>
+  <p>
+    _data: Represents the value of the node. It could be the input value (for
+    input nodes), the weight, the bias, or the output value (for output nodes).
+    _grad: Holds the gradient of the node, which is used during backpropagation.
+    _prev: Stores pointers to the nodes that provide input to the current node.
+    _op: Stores the operation that generates this node, e.g., "+", "*", or
+    "tanh". _label: A label for the node, which is useful for identifying the
+    node during debugging or visualization. _backward: A function object that
+    holds the operation to perform during backpropagation.
+  </p>
+  <p>
+    The Value class also contains several methods for carrying out operations
+    like addition, multiplication, and applying the hyperbolic tangent function
+    (tanh). Each of these operations returns a new Value object representing the
+    result and sets up the _backward function for backpropagation.
+  </p>
+  <p>
+    The backward method carries out backpropagation for the node. It first
+    creates a topological sort of the computation graph (a sequence of nodes in
+    which each node appears before all the nodes it points to), then for each
+    node in this sequence, it calls the node's _backward function.
+  </p>
+  <p>
+    The graph method prints a visual representation of the computation graph,
+    displaying each node's label, value, gradient, and operation.
+  </p>
+  <h5>main.cpp</h5>
+  <p>
+    The main function in main.cpp sets up a small neural network node and
+    carries out a forward pass and a backward pass.
+  </p>
+  <p>In the forward pass, the function:</p>
+  <p>
+    Initializes two input nodes (x1 and x2), two weight nodes (w1 and w2), and a
+    bias node (b). Calculates the dot product of the inputs and weights, adding
+    the results (x1w1 and x2w2) and the bias to get n. Applies the tanh
+    activation function to n to get the output o.
+  </p>
+  <p>
+    In the backward pass, it calls the backward method on the output node o to
+    propagate gradients back through the computation graph. Finally, it prints
+    out the computation graph using the graph method.
+  </p>
+  <h5>Purpose and Use Cases</h5>
+  <p>
+    This code's purpose is to create a flexible and reusable class (Value) that
+    canrepresent a node in a neural network. The design is such that one can
+    easily set up a simple neural network, perform a forward pass to calculate
+    outputs, and carry out backpropagation for learning.
+  </p>
+  <p>
+    While this example demonstrates a single node, it's easy to imagine how this
+    could be scaled up to a full network. Each node in the network would be an
+    instance of the Value class, linked to other Value instances in the layers
+    above and below. This design makes the code extremely flexible and
+    customizable, allowing the user to set up neural networks of any
+    architecture they wish.
+  </p>
+  <p>
+    This code can serve as a foundation for a broad range of applications, from
+    simple regression or classification tasks to more complex tasks such as
+    image recognition, natural language processing, or reinforcement learning,
+    depending on the design of the neural network built using the Value class.
+  </p>
+  <p>
+    In summary, this code provides a compact yet powerful tool for representing
+    neural networks and performing fundamental neural network operations, laying
+    the groundwork for a wide range of AI applications.
+  </p>
+</article>
