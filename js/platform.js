@@ -1,7 +1,7 @@
 class Platform {
   constructor(engine, aspect_ratio) {
     this.body = Matter.Bodies.rectangle(
-      render.options.width * OFFSET_FACTOR,
+      render.options.width * 0.5,
       render.options.height * INV_GOLDEN,
       render.options.width * HALF_INV_GOLDEN,
       render.options.height * 0.1,
@@ -30,7 +30,7 @@ class Platform {
     const widthRatio = newWidth / currentWidth;
     const heightRatio = newHeight / currentHeight;
     Matter.Body.setPosition(this.body, {
-      x: render.options.width * OFFSET_FACTOR,
+      x: render.options.width * 0.5,
       y: render.options.height * INV_GOLDEN,
     });
     Matter.Body.scale(this.body, widthRatio, heightRatio);

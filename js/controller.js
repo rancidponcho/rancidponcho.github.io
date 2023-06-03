@@ -32,25 +32,11 @@ class Controller {
   wheelEvent(e) {
     e.preventDefault();
 
-    // calculate the current scroll proportion
-    this.scrollProportion = this.matterContainer.scrollLeft / (this.matterContainer.scrollWidth - this.matterContainer.clientWidth);
-
-    // Check if at the end of the horizontal scroll or if scrolling up from the vertical scroll.
-    if (
-      this.scrollProportion >= 1.0 || // end of the horizontal scroll
-      (e.deltaY < 0 && parseInt(this.articleContainer.style.top) < 0) // scrolling up from the vertical scroll
-    ) {
       let newTop = parseInt(this.articleContainer.style.top) - e.deltaY;                            // calculate new top position of the article container.
       let maxScrollTop = this.articleContainer.scrollHeight - this.articleContainer.clientHeight;   // dont scroll past the end or the start of the article.
       if (newTop <= 0 && newTop >= -maxScrollTop) {
         this.articleContainer.style.top = newTop + "px";
-      } else if (newTop > 0) {  // scroll past the start of the vertical scroll, start the horizontal scroll again
-        this.articleContainer.style.top = "0px";
-        this.matterContainer.scrollLeft += e.deltaY;
-      }
-    } else {
-      this.matterContainer.scrollLeft += e.deltaY;  // not at the end, so continue with the horizontal scroll.
-    }
+      } 
 
     // save the new article position to key
     this.selectedPoly.articlePos = this.articleContainer.style.top;

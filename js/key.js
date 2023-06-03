@@ -4,7 +4,7 @@ class Key {
     this.sides = randInt(3, 6);
     this.body = Matter.Bodies.polygon(
       randomGaussian(
-        render.options.width * OFFSET_FACTOR,
+        render.options.width * 0.5,
         render.options.width * 0.1
       ),
       Math.random() * -1000,
@@ -31,7 +31,7 @@ class Key {
     if (this.body.position.y > render.canvas.height) {
       Matter.Body.setPosition(this.body, {
         x: randomGaussian(
-          render.options.width * OFFSET_FACTOR,
+          render.options.width * 0.5,
           render.options.width * 0.1
         ),
         y: Math.random() * -1000,

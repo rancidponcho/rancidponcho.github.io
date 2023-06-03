@@ -2,14 +2,13 @@ console.log("script.js loaded");
 //---------------------------//
 const INV_GOLDEN = 0.618; // 0.61803398875
 const HALF_INV_GOLDEN = INV_GOLDEN * 0.5;
-const OFFSET_FACTOR = 0.75;
 let aspect_ratio = window.innerWidth / window.innerHeight;
 // should add const key radius
 
 // resize to match div
 let div = document.getElementById("canvas");
 function resizeDiv() {
-  div.style.width = window.innerWidth * 2 + "px";
+  div.style.width = window.innerWidth + "px";
   div.style.height = window.innerHeight + "px";
 }
 window.addEventListener("resize", resizeDiv);
