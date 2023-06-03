@@ -11,15 +11,25 @@ class Platform {
       }
     );
 
-    this.add();
-  }
-
-  add() {
     Matter.World.add(engine.world, this.body);
   }
 
-  remove() {
-    Matter.World.remove(engine.world, this.body);
+  show() {
+    this.body.render.visible = true;
+    this.body.collisionFilter = {
+      group: 0,
+      category: 0x0001,
+      mask: 0xffffffff,
+    };
+  }
+
+  hide() {
+    this.body.render.visible = false;
+    this.body.collisionFilter = {
+      group: -1,
+      category: 0x0002,
+      mask: 0x0004,
+    };
   }
 
   resize() {

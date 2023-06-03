@@ -51,9 +51,11 @@ class Holder {
       if (this.angularForce(polygon, distance)) {
         // apply angular force
         this.displayArticle(polygon.articleID);
+        platform.hide();
       }
     } else {
       this.removeArticle();
+      platform.show();
     }
   }
 

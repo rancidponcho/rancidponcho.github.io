@@ -1,3 +1,4 @@
+html,
 body {
   margin: 0;
   padding: 0;
@@ -10,34 +11,31 @@ body {
 }
 
 #canvas {
-  width: 50%;
-  height: 100%;
   background-color: #0f0;
   overflow-y: hidden;
 }
 
 #about {
   position: absolute;
-  /* pointer-events: none; */
   background-color: transparent;
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   font-family: Consolas, monaco, monospace;
+  font-size: vw + vh; /* Adjust the font size based on viewport width */
   color: blue;
-  padding: 0 20px;
-  /* width: 50%;
-  top: 25%;
-  left: 25%; */
+  width: 61.8%;
+  left: 19.1%;
+  top: 33%;
 }
 
 #article-container {
   position: absolute;
   pointer-events: none;
   background-color: transparent;
-  width: 61%; /* inv golden */
+  width: 61.8%; /* inv golden */
   height: 75%;
-  left: 19.5%; /* half inv golden remainder */
+  left: 19.1%; /* half inv golden remainder */
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
