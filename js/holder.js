@@ -51,6 +51,7 @@ class Holder {
       if (this.angularForce(polygon, distance)) {
         // apply angular force
         this.displayArticle(polygon.articleID);
+        navigator.vibrate([200, 100, 200]);
       }
     } else {
       this.removeArticle();
@@ -105,7 +106,6 @@ class Holder {
       return;
     }
     controller.articleContainer.style.top = controller.selectedPoly.articlePos; // use stored scroll position of article
-
 
     fetch("../articles/" + articleId + ".html")
       .then((response) => response.text())
