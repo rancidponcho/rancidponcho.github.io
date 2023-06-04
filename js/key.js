@@ -1,6 +1,6 @@
 class Key {
   constructor(engine, ID) {
-    this.radius = render.canvas.width * render.canvas.height * 0.00005;
+    this.radius = render.options.width * 0.059019;
     this.sides = randInt(3, 6);
     this.body = Matter.Bodies.polygon(
       randomGaussian(render.options.width * 0.5, render.options.width * 0.1),
@@ -22,6 +22,15 @@ class Key {
     // add to world
     Matter.Body.setAngle(this.body, Math.random());
     Matter.World.add(engine.world, this.body);
+
+    // resize event
+    window.addEventListener("resize", () => {
+      const currentRadius = this.radius;
+      const newRadius = render.canvas.width * 0.059019;
+      const radiusRatio = newRadius / currentRadius;
+      Matter.Body.scale(this.body, radiusRatio, radiusRatio);
+      this.radius = newRadius;
+    });
   }
 
   respawn() {

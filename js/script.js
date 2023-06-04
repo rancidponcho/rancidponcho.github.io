@@ -97,9 +97,3 @@ function resizeCanvas() {
   platform.resize();
 }
 window.addEventListener("resize", resizeCanvas);
-
-// let manager = new window.Manager();
-// manager.spawnKeys(2);
-// manager.beforeUpdate();
-// manager.afterUpdate();
-// manager.run();
