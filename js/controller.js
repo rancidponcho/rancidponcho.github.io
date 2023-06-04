@@ -54,7 +54,7 @@ class Controller {
       // save the new article position to key
       this.selectedPoly.articlePos = this.articleContainer.style.top;
 
-      // hide address bar on scroll down
+      // hide address bar on scroll down (DOESNT WORK)
       if (deltaY > 0) {
         window.scrollTo(0, 1);
       } else if (deltaY < 0) {

@@ -7,13 +7,13 @@ body {
 #container {
   position: relative;
   white-space: nowrap;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
   touch-action: manipulation;
 }
 
 #canvas {
   background-color: #0f0;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 
 #about {

@@ -6,6 +6,11 @@ class Holder {
     this.article = "";
     this.isHolding = false;
     this.selectedKey = null;
+    this.offset = render.canvas.width * 0.1;
+
+    window.addEventListener("resize", () => {
+      this.offset = render.canvas.width * 0.1;
+    });
   }
 
   beforeUpdate(controller) {
@@ -29,8 +34,8 @@ class Holder {
     var sides = polygon.vertices.length;
     var radius = getPolygonRadius(polygon) + 2.5;
     this.body = Matter.Bodies.polygon(
-      this.render.canvas.width - 100, // position x
-      100, // position y
+      this.render.canvas.width - this.offset, // position x
+      this.offset, // position y
       sides,
       radius,
       {
@@ -72,7 +77,7 @@ class Holder {
   }
 
   linearForce(polygon, distance, dx, dy) {
-    let A = 0.001; // peak height
+    let A = 0.0005; // peak height
     let B = 0; // position of the peak
     let C = 50; // distribution width
     let magnitude =

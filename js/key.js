@@ -25,7 +25,7 @@ class Key {
   }
 
   respawn() {
-    if (this.body.position.y > render.canvas.height) {
+    if (this.body.position.y > render.canvas.height + 50) {
       Matter.Body.setPosition(this.body, {
         x: randomGaussian(
           render.options.width * 0.5,
