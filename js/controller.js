@@ -88,16 +88,19 @@ class Controller {
     });
   }
 
-  findClosestKey(mousePosition) {
+  selectKey(mousePosition) {
     let minDistance = Infinity;
     Matter.Composite.allBodies(this.engine.world).forEach((body) => {
-      let dx = mousePosition.x - body.position.x;
-      let dy = mousePosition.y - body.position.y;
-      let distance = Math.sqrt(dx * dx + dy * dy);
+      if (body !== platform.body && body !== holder.body) {
+        // find closest key
+        let dx = mousePosition.x - body.position.x;
+        let dy = mousePosition.y - body.position.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < minDistance) {
-        minDistance = distance;
-        this.selectedPoly = body;
+        if (distance < minDistance) {
+          minDistance = distance;
+          this.selectedPoly = body;
+        }
       }
     });
   }
@@ -108,7 +111,7 @@ class Controller {
     }
 
     let mousePosition = this.mouseConstraint.mouse.position;
-    this.findClosestKey(mousePosition);
+    this.selectKey(mousePosition);
 
     // other keys
     Matter.Composite.allBodies(this.engine.world).forEach((body) => {
