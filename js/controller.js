@@ -54,6 +54,13 @@ class Controller {
       // save the new article position to key
       this.selectedPoly.articlePos = this.articleContainer.style.top;
 
+      // hide address bar on scroll down
+      if (deltaY > 0) {
+        window.scrollTo(0, 1);
+      } else if (deltaY < 0) {
+        window.scrollTo(0, 0);
+      }
+
       // update startY to store the current touch position
       startY = e.touches[0].clientY;
     });
