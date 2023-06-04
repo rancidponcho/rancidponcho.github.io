@@ -72,9 +72,9 @@ class Holder {
   }
 
   linearForce(polygon, distance, dx, dy) {
-    let A = 0.0006; // peak height
+    let A = 0.001; // peak height
     let B = 0; // position of the peak
-    let C = 35; // distribution width
+    let C = 50; // distribution width
     let magnitude =
       A * Math.exp(-Math.pow(distance - B, 2) / (2 * Math.pow(C, 2))); // gaussian
     Matter.Body.applyForce(polygon, polygon.position, {

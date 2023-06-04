@@ -8,6 +8,7 @@ body {
   position: relative;
   white-space: nowrap;
   overflow-x: hidden;
+  touch-action: manipulation;
 }
 
 #canvas {

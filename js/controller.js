@@ -64,13 +64,13 @@ class Controller {
     const container = document.getElementById("container");
     container.addEventListener("mousedown", () => {
       about.classList.add("fade-out");
-      about.classList.add("no-pointer-events");
+      // about.classList.add("no-pointer-events");
       // container.removeEventListener("mousedown", () => {});
     });
     // mobile
     container.addEventListener("touchstart", () => {
       about.classList.add("fade-out");
-      about.classList.add("no-pointer-events");
+      // about.classList.add("no-pointer-events");
       // container.removeEventListener("touchstart", () => {});
     });
 
