@@ -53,6 +53,9 @@ class Controller {
       }
       // save the new article position to key
       this.selectedPoly.articlePos = this.articleContainer.style.top;
+
+      // update startY to store the current touch position
+      startY = e.touches[0].clientY;
     });
 
     // fade out on press
