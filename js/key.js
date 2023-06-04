@@ -1,6 +1,6 @@
 class Key {
   constructor(engine, ID) {
-    this.radius = 50;
+    this.radius = render.canvas.width * render.canvas.height * 0.00005;
     this.sides = randInt(3, 6);
     this.body = Matter.Bodies.polygon(
       randomGaussian(render.options.width * 0.5, render.options.width * 0.1),
