@@ -35,7 +35,7 @@ class Holder {
     var radius = getPolygonRadius(polygon) + 2.5;
     this.body = Matter.Bodies.polygon(
       this.render.canvas.width - this.offset, // position x
-      this.offset, // position y
+      100, // position y
       sides,
       radius,
       {
