@@ -11,6 +11,9 @@ class Holder {
     window.addEventListener("resize", () => {
       this.offset = render.canvas.width * 0.1;
     });
+    window.addEventListener("fullscreenchange", () => {
+      this.offset = render.canvas.width * 0.1;
+    });
   }
 
   beforeUpdate(controller) {

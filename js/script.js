@@ -14,6 +14,23 @@ function resizeDiv() {
 window.addEventListener("resize", resizeDiv);
 resizeDiv();
 
+// mobile rotation/orientation change
+var previousOrientation = window.orientation;
+var checkOrientation = function () {
+  if (window.orientation !== previousOrientation) {
+    previousOrientation = window.orientation;
+    // orientation changed, do your magic here
+    resizeDiv();
+    resizeCanvas();
+  }
+};
+
+window.addEventListener("resize", checkOrientation, false);
+window.addEventListener("orientationchange", checkOrientation, false);
+
+// (optional) Android doesn't always fire orientationChange on 180 degree turns
+setInterval(checkOrientation, 2000);
+
 /* init matter-js */
 let engine = Matter.Engine.create();
 let runner = Matter.Runner.create({
@@ -58,7 +75,7 @@ let lastTimestep = 0;
 let frameCount = 0;
 /* before update */
 Matter.Events.on(engine, "beforeUpdate", () => {
-  // fps
+  // fps timer
   if (!lastTimestep) {
     lastTimestep = engine.timing.timestamp;
   }

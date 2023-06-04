@@ -107,17 +107,24 @@ class Controller {
       let dx = mousePosition.x - body.position.x;
       let dy = mousePosition.y - body.position.y;
       let distance = Math.sqrt(dx * dx + dy * dy);
-
-      // Attractive force
-      let A = 0.00004; // peak height
-      let B = 0; // position of the peak
-      let C = 100; // distribution width
-      // selected key gets greater attraction
-      if (body === this.selectedPoly) {
+      let A, B, C; // peak height, pos of peak, distribution width
+      if (body == holder.selectedKey) {
+        // key in holder has smaller force radius to prevent falling out during mobile scrolling
+        A = 0.00075;
+        B = 0;
+        C = 50;
+      } else if (body === this.selectedPoly) {
+        // selected poly gets greater attraction
         A = 0.0005;
         B = 0;
         C = 100;
+      } else {
+        // on unselected keys
+        A = 0.00004;
+        B = 0;
+        C = 100;
       }
+
       let magnitude =
         A * Math.exp(-Math.pow(distance - B, 2) / (2 * Math.pow(C, 2))); // Gaussian function
       // let forceMagnitude = 0.0005 * Math.exp(-0.025 * distance); // exponential decay
