@@ -35,7 +35,7 @@ class Holder {
     var radius = getPolygonRadius(polygon) + 2.5;
     this.body = Matter.Bodies.polygon(
       this.render.canvas.width - this.offset, // position x
-      100, // position y
+      this.offset, // position y
       sides,
       radius,
       {
@@ -89,7 +89,7 @@ class Holder {
   }
 
   angularForce(polygon, distance) {
-    if (distance < 1) {
+    if (distance < 5) {
       // prevent division by zero
       return true;
     }

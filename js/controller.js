@@ -3,7 +3,6 @@ class Controller {
     this.engine = engine;
     this.matterContainer = matterContainer;
     this.articleContainer = document.getElementById("article-container");
-    this.scrollProportion = 0;
     this.selectedPoly = null;
 
     // matter-js mouseConstraint
@@ -54,13 +53,6 @@ class Controller {
       // save the new article position to key
       this.selectedPoly.articlePos = this.articleContainer.style.top;
 
-      // hide address bar on scroll down (DOESNT WORK)
-      if (deltaY > 0) {
-        window.scrollTo(0, 1);
-      } else if (deltaY < 0) {
-        window.scrollTo(0, 0);
-      }
-
       // update startY to store the current touch position
       startY = e.touches[0].clientY;
     });
@@ -81,12 +73,6 @@ class Controller {
       platform.show();
       // about.classList.add("no-pointer-events");
       // container.removeEventListener("touchstart", () => {});
-    });
-
-    // resize event
-    window.addEventListener("resize", () => {
-      this.matterContainer.scrollLeft =
-        this.scrollProportion * this.matterContainer.scrollWidth;
     });
   }
 
