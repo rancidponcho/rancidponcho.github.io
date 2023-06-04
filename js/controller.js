@@ -65,16 +65,16 @@ class Controller {
     container.addEventListener("mousedown", () => {
       about.classList.add("fade-out");
       about.classList.add("no-pointer-events");
-      container.removeEventListener("mousedown", () => {});
+      // container.removeEventListener("mousedown", () => {});
     });
     // mobile
     container.addEventListener("touchstart", () => {
       about.classList.add("fade-out");
       about.classList.add("no-pointer-events");
-      container.removeEventListener("touchstart", () => {});
+      // container.removeEventListener("touchstart", () => {});
     });
 
-    // setup resize event
+    // resize event
     window.addEventListener("resize", () => {
       this.matterContainer.scrollLeft =
         this.scrollProportion * this.matterContainer.scrollWidth;

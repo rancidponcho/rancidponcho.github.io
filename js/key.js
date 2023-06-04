@@ -3,10 +3,7 @@ class Key {
     this.radius = 50;
     this.sides = randInt(3, 6);
     this.body = Matter.Bodies.polygon(
-      randomGaussian(
-        render.options.width * 0.5,
-        render.options.width * 0.1
-      ),
+      randomGaussian(render.options.width * 0.5, render.options.width * 0.1),
       Math.random() * -1000,
       this.sides,
       this.radius,
@@ -16,7 +13,7 @@ class Key {
         restitution: 0.9,
         friction: 0.01,
         render: {
-          fillStyle: randomColor(),
+          fillStyle: randomPastelColor(),
         },
       }
     );
@@ -60,6 +57,14 @@ function randomColor() {
       .padStart(6, "0")
   );
 }
+
+function randomPastelColor() {
+  const h = Math.floor(Math.random() * 360);
+  const s = Math.floor(Math.random() * 70) + 25;
+  const l = Math.floor(Math.random() * 10) + 85;
+  return `hsl(${h}, ${s}%, ${l}%)`;
+}
+
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }

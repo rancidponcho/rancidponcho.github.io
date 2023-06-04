@@ -7,7 +7,7 @@ class Platform {
       render.options.height * 0.1,
       {
         isStatic: true,
-        render: { fillStyle: randomColor() },
+        render: { fillStyle: randomPastelColor() },
       }
     );
 
