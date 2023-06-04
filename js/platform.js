@@ -10,7 +10,12 @@ class Platform {
         render: { fillStyle: randomPastelColor() },
       }
     );
-
+    this.body.render.visible = false;
+    this.body.collisionFilter = {
+      group: -1,
+      category: 0x0002,
+      mask: 0x0004,
+    };
     Matter.World.add(engine.world, this.body);
   }
 
