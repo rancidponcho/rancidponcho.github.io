@@ -54,7 +54,7 @@ let articleIDs = [
   "article5",
   "article6",
 ];
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 2; i++) {
   let key = new window.Key(engine, articleIDs[i]);
   keys.push(key);
 }
