@@ -8,8 +8,11 @@ let aspect_ratio = window.innerWidth / window.innerHeight;
 // resize to match div
 let div = document.getElementById("canvas");
 function resizeDiv() {
-  div.style.width = window.innerWidth + "px";
-  div.style.height = window.innerHeight + "px";
+  const ratio = Math.ceil(window.devicePixelRatio);
+  div.width = window.innerWidth * ratio;
+  div.height = window.innerHeight * ratio;
+  div.style.width = `${window.innerWidth}px`;
+  div.style.height = `${window.innerHeight}px`;
 }
 window.addEventListener("resize", resizeDiv);
 resizeDiv();
