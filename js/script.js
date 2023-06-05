@@ -33,6 +33,7 @@ let render = Matter.Render.create({
   },
 });
 
+// init bodies
 let container = document.getElementById("container");
 let controller = new window.Controller(engine, render, container);
 let holder = new window.Holder(engine, render);
@@ -51,26 +52,26 @@ let articleIDs = [
   "article5",
   "article6",
 ];
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 3; i++) {
   let key = new window.Key(engine, articleIDs[i]);
   keys.push(key);
 }
 
-let lastTimestep = 0;
-let frameCount = 0;
+// let lastTimestep = 0;
+// let frameCount = 0;
 /* before update */
 Matter.Events.on(engine, "beforeUpdate", () => {
   // fps timer
-  if (!lastTimestep) {
-    lastTimestep = engine.timing.timestamp;
-  }
-  const elapsed = engine.timing.timestamp - lastTimestep;
-  frameCount++;
-  if (elapsed >= 1000) {
-    const fps = frameCount / (elapsed / 1000);
-    frameCount = 0;
-    lastTimestep = engine.timing.timestamp;
-  }
+  // if (!lastTimestep) {
+  //   lastTimestep = engine.timing.timestamp;
+  // }
+  // const elapsed = engine.timing.timestamp - lastTimestep;
+  // frameCount++;
+  // if (elapsed >= 1000) {
+  //   const fps = frameCount / (elapsed / 1000);
+  //   frameCount = 0;
+  //   lastTimestep = engine.timing.timestamp;
+  // }
 
   //
   controller.mouseAttract();
@@ -88,10 +89,11 @@ Matter.Runner.run(runner, engine);
 Matter.Render.run(render);
 
 function resizeCanvas() {
+  const ratio = Math.ceil(window.devicePixelRatio);
   aspect_ratio = window.innerWidth / window.innerHeight;
 
-  render.canvas.width = div.clientWidth;
-  render.canvas.height = div.clientHeight;
+  render.canvas.width = div.clientWidth * ratio;
+  render.canvas.height = div.clientHeight * ratio;
   render.options.width = div.clientWidth;
   render.options.height = div.clientHeight;
 
