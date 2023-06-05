@@ -46,7 +46,7 @@ class Platform {
     const heightRatio = newHeight / currentHeight;
     Matter.Body.setPosition(this.body, {
       x: render.options.width * 0.5,
-      y: render.options.height * INV_GOLDEN,
+      y: render.options.height * 0.8,
     });
     Matter.Body.scale(this.body, widthRatio, heightRatio);
   }
