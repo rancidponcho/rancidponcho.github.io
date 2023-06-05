@@ -56,3 +56,10 @@ body {
 .no-pointer-events {
   pointer-events: none;
 }
+
+@media (max-width: 600px) {
+  #about,
+  #article-container {
+    font-size: 10px;
+  }
+}
