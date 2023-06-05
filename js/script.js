@@ -101,3 +101,4 @@ function resizeCanvas() {
   platform.resize();
 }
 window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
