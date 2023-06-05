@@ -37,12 +37,14 @@ class Controller {
     // add touchstart event listener to store the starting touch position
     let canvas = document.getElementById("canvas");
     canvas.addEventListener("touchstart", (e) => {
+      holder.selectedKey.articlePos = this.articleContainer.style.top;
       startY = e.touches[0].clientY;
     });
 
     // add touchmove event listener to update the position of the article container
     canvas.addEventListener("touchmove", (e) => {
       e.preventDefault();
+
       let deltaY = startY - e.touches[0].clientY; // calculate the change in touch position
       let newTop = parseInt(this.articleContainer.style.top) - deltaY; // calculate new top position of the article container
       let maxScrollTop =
@@ -51,7 +53,6 @@ class Controller {
         this.articleContainer.style.top = newTop + "px";
       }
       // save the new article position to key
-      this.selectedPoly.articlePos = this.articleContainer.style.top;
 
       // update startY to store the current touch position
       startY = e.touches[0].clientY;

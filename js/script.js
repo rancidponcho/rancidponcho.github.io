@@ -1,4 +1,3 @@
-console.log("script.js loaded");
 //---------------------------//
 const INV_GOLDEN = 0.618; // 0.61803398875
 const HALF_INV_GOLDEN = INV_GOLDEN * 0.5;
