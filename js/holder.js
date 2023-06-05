@@ -62,10 +62,17 @@ class Holder {
     let dy = this.body.position.y - polygon.position.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
     this.linearForce(polygon, distance, dx, dy); // apply linear force
-    if (distance < 50) {
+    if (distance < 100) {
       this.negateGravity(polygon);
       this.angularForce(polygon, distance);
 
+      let maxDistance = 50; // maximum distance at which the article should be completely transparent
+      let mean = 0; // mean of the Gaussian distribution
+      let standardDeviation = maxDistance / 3; // standard deviation of the Gaussian distribution
+      let opacity = Math.exp(
+        -Math.pow(distance - mean, 2) / (2 * Math.pow(standardDeviation, 2))
+      );
+      controller.articleContainer.style.opacity = opacity;
       this.displayArticle(polygon.articleID);
       platform.hide();
       this.isHolding = true;
@@ -91,7 +98,7 @@ class Holder {
   }
 
   angularForce(polygon, distance) {
-    if (distance < 5) {
+    if (distance < 1) {
       // prevent division by zero
       return true;
     }
