@@ -6,13 +6,13 @@ class Holder {
     this.article = "";
     this.isHolding = false;
     this.selectedKey = null;
-    this.offset = render.canvas.width * 0.1;
+    this.offset = render.options.width * 0.1;
 
     window.addEventListener("resize", () => {
-      this.offset = render.canvas.width * 0.1;
+      this.offset = render.options.width * 0.1;
     });
     window.addEventListener("fullscreenchange", () => {
-      this.offset = render.canvas.width * 0.1;
+      this.offset = render.options.width * 0.1;
     });
   }
 
@@ -37,8 +37,8 @@ class Holder {
     var sides = polygon.vertices.length;
     var radius = getPolygonRadius(polygon);
     this.body = Matter.Bodies.polygon(
-      100, // position x
-      100, // position y
+      this.render.options.width - this.offset, // position x
+      this.offset, // position y
       sides,
       radius,
       {

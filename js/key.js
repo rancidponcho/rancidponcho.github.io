@@ -1,7 +1,7 @@
 class Key {
   constructor(engine, ID) {
     this.radius =
-      render.canvas.width * 0.08 < 50 ? render.canvas.width * 0.08 : 50;
+      render.options.width * 0.08 < 50 ? render.options.width * 0.08 : 50;
     this.sides = randInt(3, 6);
     this.body = Matter.Bodies.polygon(
       randomGaussian(render.options.width * 0.5, render.options.width * 0.1),
@@ -28,7 +28,7 @@ class Key {
     // resize event
     window.addEventListener("resize", () => {
       const currentRadius = this.radius;
-      const newRadius = render.canvas.width * 0.08;
+      const newRadius = render.options.width * 0.08;
       if (newRadius < 50) {
         const radiusRatio = newRadius / currentRadius;
         Matter.Body.scale(this.body, radiusRatio, radiusRatio);
