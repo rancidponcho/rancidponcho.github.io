@@ -14,6 +14,7 @@ function resizeDiv() {
   div.style.height = `${window.innerHeight}px`;
 }
 window.addEventListener("resize", resizeDiv);
+window.addEventListener("orientationchange", resizeDiv);
 resizeDiv();
 
 /* init matter-js */
@@ -102,4 +103,5 @@ function resizeCanvas() {
   platform.resize();
 }
 window.addEventListener("resize", resizeCanvas);
+window.addEventListener("orientationchange", resizeCanvas);
 resizeCanvas();
