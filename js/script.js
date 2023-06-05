@@ -18,10 +18,10 @@ resizeDiv();
 var previousOrientation = window.orientation;
 var checkOrientation = function () {
   if (window.orientation !== previousOrientation) {
-    previousOrientation = window.orientation;
     // orientation changed, do your magic here
     resizeDiv();
     resizeCanvas();
+    previousOrientation = window.orientation;
   }
 };
 
