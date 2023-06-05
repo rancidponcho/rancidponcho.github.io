@@ -30,6 +30,7 @@ let render = Matter.Render.create({
     height: div.clientHeight,
     wireframes: false,
     background: "rgb(255, 255,255)",
+    pixelRatio: window.devicePixelRatio,
   },
 });
 
