@@ -78,6 +78,7 @@ Matter.Events.on(engine, "beforeUpdate", () => {
   //
   controller.mouseAttract();
   holder.beforeUpdate(controller);
+  platform.update();
 });
 
 /* after update */

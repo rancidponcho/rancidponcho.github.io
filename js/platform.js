@@ -10,31 +10,22 @@ class Platform {
         render: { fillStyle: randomPastelColor() },
       }
     );
-    this.body.render.visible = false;
-    this.body.collisionFilter = {
-      group: -1,
-      category: 0x0002,
-      mask: 0x0004,
-    };
     Matter.World.add(engine.world, this.body);
+    this.isHidden = false;
+    this.currentScale = 1;
+    this.targetScale = 1;
   }
 
   show() {
-    this.body.render.visible = true;
-    this.body.collisionFilter = {
-      group: 0,
-      category: 0x0001,
-      mask: 0xffffffff,
-    };
+    if (!this.isHidden) return;
+    this.isHidden = false;
+    this.targetScale = 1;
   }
 
   hide() {
-    this.body.render.visible = false;
-    this.body.collisionFilter = {
-      group: -1,
-      category: 0x0002,
-      mask: 0x0004,
-    };
+    if (this.isHidden) return;
+    this.isHidden = true;
+    this.targetScale = 0;
   }
 
   resize() {
@@ -49,6 +40,32 @@ class Platform {
       y: render.options.height * 0.8,
     });
     Matter.Body.scale(this.body, widthRatio, heightRatio);
+  }
+
+  update() {
+    const deltaScale = (this.targetScale - this.currentScale) / 10; // adjust speed here
+    Matter.Body.scale(
+      this.body,
+      1 + deltaScale / this.currentScale,
+      1 + deltaScale / this.currentScale
+    );
+    this.currentScale += deltaScale;
+
+    if (this.currentScale < 0.01) {
+      this.body.render.visible = false;
+      this.body.collisionFilter = {
+        group: -1,
+        category: 0x0002,
+        mask: 0x0004,
+      };
+    } else {
+      this.body.render.visible = true;
+      this.body.collisionFilter = {
+        group: 0,
+        category: 0x0001,
+        mask: 0xffffffff,
+      };
+    }
   }
 }
 

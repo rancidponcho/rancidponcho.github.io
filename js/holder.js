@@ -64,13 +64,12 @@ class Holder {
     this.linearForce(polygon, distance, dx, dy); // apply linear force
     if (distance < 50) {
       this.negateGravity(polygon);
-      if (this.angularForce(polygon, distance)) {
-        // apply angular force
-        this.displayArticle(polygon.articleID);
-        platform.hide();
-        this.isHolding = true;
-        this.selectedKey = polygon;
-      }
+      this.angularForce(polygon, distance);
+
+      this.displayArticle(polygon.articleID);
+      platform.hide();
+      this.isHolding = true;
+      this.selectedKey = polygon;
     } else {
       this.removeArticle();
       platform.show();
