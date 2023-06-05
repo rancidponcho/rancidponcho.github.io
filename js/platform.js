@@ -1,15 +1,9 @@
 class Platform {
   constructor(engine, aspect_ratio) {
-    this.body = Matter.Bodies.rectangle(
-      render.options.width * 0.5,
-      render.options.height * INV_GOLDEN,
-      render.options.width * INV_GOLDEN,
-      render.options.height * 0.1,
-      {
-        isStatic: true,
-        render: { fillStyle: randomPastelColor() },
-      }
-    );
+    this.body = Matter.Bodies.rectangle(1, 1, 1, 1, {
+      isStatic: true,
+      render: { fillStyle: randomPastelColor() },
+    });
     Matter.World.add(engine.world, this.body);
     this.isHidden = false;
     this.currentScale = 1;
@@ -44,12 +38,14 @@ class Platform {
 
   update() {
     const deltaScale = (this.targetScale - this.currentScale) / 10; // adjust speed here
-    Matter.Body.scale(
-      this.body,
-      1 + deltaScale / this.currentScale,
-      1 + deltaScale / this.currentScale
-    );
-    this.currentScale += deltaScale;
+    if (Math.abs(deltaScale) > 0.0001) {
+      Matter.Body.scale(
+        this.body,
+        1 + deltaScale / this.currentScale,
+        1 + deltaScale / this.currentScale
+      );
+      this.currentScale += deltaScale;
+    }
 
     if (this.currentScale < 0.01) {
       this.body.render.visible = false;
