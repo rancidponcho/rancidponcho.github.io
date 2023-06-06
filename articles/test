@@ -1,0 +1,117 @@
+  class Value {
+    public:
+     Value(const float value = 0.0, const std::string label = "", const std::vector&lt;Value*&gt;& children = {}, const std::string& op = "")
+         : _data{value}, _prev{children}, _op{op}, _label{label}, _backward{[]() {}} {}
+ 
+     ~Value() = default;
+ 
+     // &lt;&lt; overload for printing
+     friend std::ostream& operator&lt;&lt;(std::ostream& os, const Value& obj) {
+         os &lt;&lt; obj._label &lt;&lt; " = " &lt;&lt; obj._data;
+         return os;
+     }
+ 
+     // for changing label
+     Value& operator=(const std::string& label) {
+         _label = label;
+         return *this;
+     }
+ 
+     Value operator+(Value& other) {
+         Value out(this-&gt;_data + other._data, {}, std::vector&lt;Value*&gt;{this, &other}, "+");
+         out._backward = [&]() {
+             this-&gt;_grad += out._grad;
+             other._grad += out._grad;
+         };
+         return out;
+     }
+ 
+     Value operator*(Value& other) {
+         Value out(this-&gt;_data * other._data, {}, std::vector&lt;Value*&gt;{this, &other}, "*");
+         out._backward = [&]() {
+             this-&gt;_grad += other._data * out._grad;
+             other._grad += this-&gt;_data * out._grad;
+         };
+         return out;
+     }
+ 
+     Value& operator+=(Value& other) {
+         Value result = *this + other;
+         this-&gt;_data = result._data;
+         this-&gt;_prev.push_back(&other);
+         this-&gt;_op = "+";
+         this-&gt;_backward = result._backward;
+         return *this;
+     }
+ 
+     Value tanh() {
+         float t = std::tanh(this-&gt;_data);
+         Value out(t, "o", std::vector&lt;Value*&gt;{this}, "tanh");
+         out._backward = [&, t]() {
+             this-&gt;_grad += (1 - t * t) * out._grad;
+         };
+         return out;
+     }
+ 
+     void backward() {
+         std::vector&lt;Value*&gt; topo;
+         std::set&lt;Value*&gt; visited;
+         build_topo(this, topo, visited);
+         _grad = 1;
+ 
+         for (auto it = topo.rbegin(); it != topo.rend(); ++it) {
+             Value* v = *it;
+             v-&gt;_backward();
+         }
+     }
+ 
+     void graph(int precision = 4) {
+         std::unordered_set&lt;const Value*&gt; visited;
+         visited.insert(this);
+         graph(*this, visited, 0, precision);
+     }
+ 
+     float get() const { return _data; }
+     float get_grad() const { return _grad; }
+     const std::vector&lt;Value*&gt;& get_prev() const { return _prev; }
+     const std::string& get_op() const { return _op; }
+     const std::string& get_label() const { return _label; }
+ 
+     void set_data(const float data) { _data = data; }
+     void label(const std::string label) { _label = label; }
+     void grad(const float grad) { _grad = grad; }
+ 
+    private:
+     float _data;
+     float _grad{};
+     std::vector&lt;Value*&gt; _prev;  // might need to converted to set for efficiency
+     std::string _op;
+     std::string _label;
+     std::function&lt;void()&gt; _backward;
+ 
+     // print the graph of a value node
+     void graph(const Value& v, std::unordered_set&lt;const Value*&gt;& visited, int indent, int precision) const {
+         std::cout &lt;&lt; std::string(indent, ' ') &lt;&lt; "+---" &lt;&lt; v.get_label() &lt;&lt; "[ " &lt;&lt; std::fixed &lt;&lt; std::setprecision(precision) &lt;&lt; v.get() &lt;&lt; " ][ " &lt;&lt; v.get_grad() &lt;&lt; " ]" &lt;&lt; (v.get_op().empty() ? "" : "(" + v.get_op() + ")") &lt;&lt; std::endl;
+         for (const Value* prev : v.get_prev()) {
+             if (!visited.count(prev)) {
+                 visited.insert(prev);
+                 graph(*prev, visited, indent + 4, precision);
+             } else {
+                 std::cout &lt;&lt; std::string(indent + 4, ' ') &lt;&lt; "+---" &lt;&lt; prev-&gt;get_label() &lt;&lt; std::endl;
+             }
+         }
+     }
+ 
+     // topological sort
+     void build_topo(Value* v, std::vector&lt;Value*&gt;& topo, std::set&lt;Value*&gt;& visited) {
+         if (visited.find(v) == visited.end()) {
+             visited.insert(v);
+ 
+             for (Value* child : v-&gt;_prev) {
+                 build_topo(child, topo, visited);
+             }
+ 
+             topo.push_back(v);
+         }
+     }
+ };

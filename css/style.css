@@ -48,6 +48,14 @@ body {
   color: blue;
 }
 
+article code {
+  white-space: pre-wrap;
+  color: black;
+  font-size: 0.8rem;
+  tab-size: 4;
+  pointer-events: all;
+}
+
 .fade-out {
   opacity: 0;
   transition: opacity 1s;

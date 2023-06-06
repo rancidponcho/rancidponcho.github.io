@@ -47,14 +47,14 @@ let platform = new window.Platform(
 /* spawn keys */
 let keys = [];
 let articleIDs = [
-  "article1",
+  "autograd",
   "article2",
   "article3",
   "article4",
   "article5",
   "article6",
 ];
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < 1; i++) {
   let key = new window.Key(engine, articleIDs[i]);
   keys.push(key);
 }

@@ -1,0 +1,394 @@
+<article>
+  <h1>Unraveling the Mysteries of Neural Networks with C++</h1>
+  <img
+    src="images/node_network.png"
+    alt="Node Network"
+    style="
+      width: 100vw;
+      position: absolute;
+      left: -31%;
+      top: 0;
+      display: block;
+      margin: 0 auto;
+      background-color: transparent;
+      z-index: -0.5;
+      opacity: 0.1;
+      top: 25%;
+    "
+  />
+  <p>
+    In this article, I will show you how I implemented a neuron in C++ using a
+    class called Value that represents a scalar value and its gradient. A neuron
+    is a basic unit of a neural network, which is a computational model inspired
+    by the brain. A neuron takes some inputs, applies a weighted sum and an
+    activation function, and produces an output. To train a neural network, we
+    need to adjust the weights of the neurons based on the error between the
+    desired and actual outputs. This process requires calculating the gradients
+    of the error with respect to the weights, which can be done using a
+    technique called automatic differentiation. Automatic differentiation is a
+    way of computing derivatives of functions by applying the chain rule and
+    storing intermediate results. In this project, I used the Value class to
+    implement automatic differentiation by defining arithmetic operators and
+    activation functions that update the gradients of the values involved.
+  </p>
+  <h1>The Value Class</h1>
+  <p>
+    The core of my project is the Value class, which represents a scalar value
+    and its gradient. A gradient is the derivative of a function with respect to
+    its inputs. For example, if f(x) = x^2, then the gradient of f(x) at x = 2
+    is 4. The gradient tells us how much the function changes when we change the
+    input by a small amount. The Value class has the following attributes and
+    methods:
+  </p>
+  <ul>
+    <li>
+      _data: Actual value of the object as a float. It is initialized by the
+      constructor and can be changed by the set_data method.
+    </li>
+    <li>
+      _grad: Gradient of the object with respect to the output as a float. It is
+      initialized to zero by the constructor and updated by the backward method.
+      It can be accessed by the get_grad method or changed by the grad method.
+    </li>
+    <li>
+      _prev: Vector of pointers to the previous values that were used to create
+      this value by some operation. It is initialized by the constructor and can
+      be accessed by the get_prev method.
+    </li>
+    <li>
+      _op: String that represents the operation that was used to create this
+      value from its previous values. It is initialized by the constructor and
+      can be accessed by the get_op method.
+    </li>
+    <li>
+      _label: String that represents a human-readable label for this value. It
+      is initialized by the constructor and can be changed by the operator= or
+      label methods. It can be accessed by the get_label method.
+    </li>
+    <li>
+      _backward: Stores a function object that defines how to update the
+      gradients of the previous values based on this value&apos;s gradient and
+      operation. It is initialized by each operation method (+, *, tanh, etc.)
+      and executed by the backward method.
+    </li>
+    <li>
+      operator&lt;&lt;: For printing a value to an output stream. It prints the
+      label and data of the value.
+    </li>
+    <li>
+      operator+: For adding two values together. It creates a new value with the
+      sum of the data of both values, and sets its previous values and operation
+      accordingly. It also defines its backward function as adding its gradient
+      to both previous values&apos; gradients.
+    </li>
+    <li>
+      operator*: For multiplying two values together. It creates a new value
+      with the product of the data of both values, and sets its previous values
+      and operation accordingly. It also defines its backward function as
+      multiplying its gradient by each previous value&apos;s data and adding it
+      to their gradients.
+    </li>
+    <li>
+      operator+=: For adding another value to this value in place. It updates
+      this value&apos;s data with the sum of both values&apos; data, and adds
+      the other value to its previous values and operation. It also updates its
+      backward function accordingly.
+    </li>
+    <li>
+      tanh: Applies the tanh activation function to this value and returns a new
+      value with the result. It sets its previous value and operation
+      accordingly. It also defines its backward function as multiplying its
+      gradient by (1 - tanh^2) and adding it to its previous value&apos;s
+      gradient.
+    </li>
+    <li>
+      backward: Performs automatic differentiation on this value and updates all
+      its previous values&apos; gradients recursively. It starts with setting
+      this value&apos;s gradient to 1, then calls its backward function, which
+      in turn calls all its previous values&apos; backward functions, until it
+      reaches the input values that have no previous values.
+    </li>
+    <li>
+      graph: Prints a graphical representation of this value and all its
+      previous values recursively, showing their data, gradient, operation, and
+      label. It uses an unordered set to keep track of which values have been
+      visited already, to avoid infinite loops in case of cycles in the graph.
+    </li>
+  </ul>
+  <p>
+    As you can see, the Value class encapsulates all the logic needed to perform
+    forward and backward propagation on any computation graph involving basic
+    arithmetic operations and tanh activation functions. By using this class, we
+    can easily create complex neural networks without having to manually compute
+    or update any gradients.
+  </p>
+  <p>Here is the code for the Value class:</p>
+  <div
+    style="
+      background-color: rgba(242, 242, 242, 0.5);
+      border-radius: 25px;
+      border: 2px solid #73ad21;
+    "
+  >
+    <!-- prettier-ignore -->
+    <code>
+  class Value &lbrace;
+   public:
+    Value(const float value = 0.0, const std::string label = &quot;&quot;, const std::vector&lt;Value*&gt;&amp; children = &lbrace;&rbrace;, const std::string&amp; op = &quot;&quot;)
+        : _data&lbrace;value&rbrace;, _prev&lbrace;children&rbrace;, _op&lbrace;op&rbrace;, _label&lbrace;label&rbrace;, _backward&lbrace;[]() &lbrace;&rbrace;&rbrace; &lbrace;&rbrace;
+
+    ~Value() = default;
+
+    // &lt;&lt; overload for printing
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const Value&amp; obj) &lbrace;
+        os &lt;&lt; obj._label &lt;&lt; &quot; = &quot; &lt;&lt; obj._data;
+        return os;
+    &rbrace;
+
+    // for changing label
+    Value&amp; operator=(const std::string&amp; label) &lbrace;
+        _label = label;
+        return *this;
+    &rbrace;
+
+    Value operator+(Value&amp; other) &lbrace;
+        Value out(this-&gt;_data + other._data, &lbrace;&rbrace;, std::vector&lt;Value*&gt;&lbrace;this, &amp;other&rbrace;, &quot;+&quot;);
+        out._backward = [&amp;]() &lbrace;
+            this-&gt;_grad += out._grad;
+            other._grad += out._grad;
+        &rbrace;;
+        return out;
+    &rbrace;
+
+    Value operator*(Value&amp; other) &lbrace;
+        Value out(this-&gt;_data * other._data, &lbrace;&rbrace;, std::vector&lt;Value*&gt;&lbrace;this, &amp;other&rbrace;, &quot;*&quot;);
+        out._backward = [&amp;]() &lbrace;
+            this-&gt;_grad += other._data * out._grad;
+            other._grad += this-&gt;_data * out._grad;
+        &rbrace;;
+        return out;
+    &rbrace;
+
+    Value&amp; operator+=(Value&amp; other) &lbrace;
+        Value result = *this + other;
+        this-&gt;_data = result._data;
+        this-&gt;_prev.push_back(&amp;other);
+        this-&gt;_op = &quot;+&quot;;
+        this-&gt;_backward = result._backward;
+        return *this;
+    &rbrace;
+
+    Value tanh() &lbrace;
+        float t = std::tanh(this-&gt;_data);
+        Value out(t, &quot;o&quot;, std::vector&lt;Value*&gt;&lbrace;this&rbrace;, &quot;tanh&quot;);
+        out._backward = [&amp;, t]() &lbrace;
+            this-&gt;_grad += (1 - t * t) * out._grad;
+        &rbrace;;
+        return out;
+    &rbrace;
+
+    void backward() &lbrace;
+        std::vector&lt;Value*&gt; topo;
+        std::set&lt;Value*&gt; visited;
+        build_topo(this, topo, visited);
+        _grad = 1;
+
+        for (auto it = topo.rbegin(); it != topo.rend(); ++it) &lbrace;
+            Value* v = *it;
+            v-&gt;_backward();
+        &rbrace;
+    &rbrace;
+
+    void graph(int precision = 4) &lbrace;
+        std::unordered_set&lt;const Value*&gt; visited;
+        visited.insert(this);
+        graph(*this, visited, 0, precision);
+    &rbrace;
+
+    float get() const &lbrace; return _data; &rbrace;
+    float get_grad() const &lbrace; return _grad; &rbrace;
+    const std::vector&lt;Value*&gt;&amp; get_prev() const &lbrace; return _prev; &rbrace;
+    const std::string&amp; get_op() const &lbrace; return _op; &rbrace;
+    const std::string&amp; get_label() const &lbrace; return _label; &rbrace;
+
+    void set_data(const float data) &lbrace; _data = data; &rbrace;
+    void label(const std::string label) &lbrace; _label = label; &rbrace;
+    void grad(const float grad) &lbrace; _grad = grad; &rbrace;
+
+   private:
+    float _data;
+    mutable float _grad&lbrace;&rbrace;;
+    std::vector&lt;Value*&gt; _prev;  // might need to converted to set for efficiency
+    std::string _op;
+    std::string _label;
+    std::function&lt;void()&gt; _backward;
+
+    // print the graph of a value node
+    void graph(const Value&amp; v, std::unordered_set&lt;const Value*&gt;&amp; visited, int indent, int precision) const &lbrace;
+        std::cout &lt;&lt; std::string(indent, &apos; &apos;) &lt;&lt; &quot;+---&quot; &lt;&lt; v.get_label() &lt;&lt; &quot;[ &quot; &lt;&lt; std::fixed &lt;&lt; std::setprecision(precision) &lt;&lt; v.get() &lt;&lt; &quot; ][ &quot; &lt;&lt; v.get_grad() &lt;&lt; &quot; ]&quot; &lt;&lt; (v.get_op().empty() ? &quot;&quot; : &quot;(&quot; + v.get_op() + &quot;)&quot;) &lt;&lt; std::endl;
+        for (const Value* prev : v.get_prev()) &lbrace;
+            if (!visited.count(prev)) &lbrace;
+                visited.insert(prev);
+                graph(*prev, visited, indent + 4, precision);
+            &rbrace; else &lbrace;
+                std::cout &lt;&lt; std::string(indent + 4, &apos; &apos;) &lt;&lt; &quot;+---&quot; &lt;&lt; prev-&gt;get_label() &lt;&lt; std::endl;
+            &rbrace;
+        &rbrace;
+    &rbrace;
+
+    // topological sort
+    void build_topo(Value* v, std::vector&lt;Value*&gt;&amp; topo, std::set&lt;Value*&gt;&amp; visited) &lbrace;
+        if (visited.find(v) == visited.end()) &lbrace;
+            visited.insert(v);
+
+            for (Value* child : v-&gt;_prev) &lbrace;
+                build_topo(child, topo, visited);
+            &rbrace;
+
+            topo.push_back(v);
+        &rbrace;
+    &rbrace;
+&rbrace;;
+  </code>
+  </div>
+  <h2>A Single Neuron</h2>
+  <p>
+    To test my Value class, I decided to implement a single neuron using C++. A
+    neuron takes some inputs, multiplies them by some weights, adds a bias, and
+    applies an activation function to produce an output. The output can then be
+    compared with a desired output and the error can be used to update the
+    weights and bias using the gradients computed by the backward method. Here
+    is the code for the main.cpp file:
+  </p>
+  <div
+    style="
+      width: 315px;
+      margin: auto;
+      background-color: rgba(242, 242, 242, 0.5);
+      border-radius: 25px;
+      border: 2px solid #73ad21;
+    "
+  >
+    <!-- prettier-ignore -->
+    <code style="white-space: pre;">
+  #include "value.hpp"
+
+  int main() &lbrace;
+      Value x1&lbrace;2.0, "x1"&rbrace;;
+      Value x2&lbrace;0.0, "x2"&rbrace;;
+      // weights
+      Value w1&lbrace;-3.0, "w1"&rbrace;;
+      Value w2&lbrace;1.0, "w2"&rbrace;;
+      // bias
+      Value b&lbrace;5.8813735870195432, "b"&rbrace;;
+      // dot product
+      Value x1w1 = x1 * w1;
+      x1w1.label("x1w1");
+      Value x2w2 = x2 * w2;
+      x2w2.label("x2w2");
+      Value x1w1_x2w2 = x1w1 + x2w2;
+      x1w1_x2w2.label("x1w1 + x2w2");
+      // add bias
+      Value n = x1w1_x2w2 + b;
+      n.label("n");
+      // output
+      Value o = n.tanh();
+      o.label("o");
+      
+      o.backward();
+      o.graph();
+
+      return 0;
+  &rbrace;
+    </code>
+  </div>
+  <p>
+    In this code, I created two inputs (x1 and x2), two weights (w1 and w2), and
+    a bias (b) as Value objects. Then I computed the dot product of the inputs
+    and weights, added the bias, and applied the tanh activation function to get
+    the output (o). I also labeled each Value object for printing purposes. Then
+    I called the backward method on the output to compute the gradients of all
+    the values involved. Finally, I called the graph method on the output to
+    print the graph of the values and their gradients. Here is the output of the
+    graph method:
+  </p>
+
+  <div
+    style="
+      width: 390px;
+      margin: auto;
+      background-color: rgba(242, 242, 242, 0.5);
+      border-radius: 25px;
+      border: 2px solid #73ad21;
+    "
+  >
+    <!-- prettier-ignore -->
+    <code style="white-space: pre;">
+  +---o[ -0.1181 ][ 1.0000 ](tanh)
+      +---n[ -0.1186 ][ 0.9861 ](+)
+          +---x1w1 + x2w2[ -6.0000 ][ 0.9861 ](+)
+              +---x1w1[ -6.0000 ][ 0.9861 ](*)
+                  +---x1[ 2.0000 ][ -2.9582 ]
+                  +---w1[ -3.0000 ][ 1.9721 ]
+              +---x2w2[ 0.0000 ][ 0.9861 ](*)
+                  +---x2[ 0.0000 ][ 0.9861 ]
+                  +---w2[ 1.0000 ][ 0.0000 ]
+        +---b[ 5.8814 ][ 0.9861 ]
+    </code>
+  </div>
+  <p>
+    As you can see, the graph shows the data and gradient of each value, as well
+    as the operation that was used to create it from its inputs. The gradient
+    tells us how much each value affects the output and how we should change it
+    to minimize the error.
+  </p>
+  <h2>Conclusion</h2>
+  <p>
+    In this article, we have seen how to implement a single neuron using C++ and
+    the Value class. We have also seen how the Value class works internally to
+    perform automatic differentiation and gradient descent on any computation
+    graph. We have tested our neuron on a simple XOR problem and observed its
+    learning process. Of course, this program is not meant to be a practical
+    tool for building neural networks. It is more of a mental exercise to
+    understand the basic concepts and challenges of neural network programming.
+    In reality, there are many more factors and complexities involved in
+    designing and training neural networks, such as:
+  </p>
+  <ul>
+    <li>
+      Choosing the right network architecture, activation functions, loss
+      functions, optimization algorithms, hyperparameters, etc.
+    </li>
+    <li>
+      Handling large datasets, high-dimensional inputs and outputs, noisy or
+      missing data, etc.
+    </li>
+    <li>
+      Dealing with overfitting, underfitting, regularization, generalization,
+      etc.
+    </li>
+    <li>
+      Implementing efficient and scalable computations using parallelism,
+      vectorization, GPU acceleration, etc.
+    </li>
+    <li>
+      Debugging and testing the network&apos;s performance and behavior using
+      metrics, visualizations, etc.
+    </li>
+  </ul>
+  <p>
+    For these purposes, it is advisable to use existing frameworks and libraries
+    that provide high-level abstractions and tools for neural network
+    programming. Some popular examples are TensorFlow , PyTorch , Keras , etc.
+    These frameworks allow you to create and train complex neural networks with
+    much less code and effort than writing everything from scratch.
+  </p>
+  <p>
+    However, it is still useful to have some knowledge of the low-level details
+    and principles of neural network programming. This can help you gain a
+    deeper understanding of how neural networks work and how to use them
+    effectively. It can also help you appreciate the power and elegance of the
+    frameworks and libraries that make neural network programming easier and
+    more accessible.
+  </p>
+</article>
