@@ -51,7 +51,7 @@ body {
 article code {
   white-space: pre-wrap;
   color: black;
-  font-size: 0.8rem;
+  font-size: vw + vh;
   tab-size: 4;
   pointer-events: all;
 }
