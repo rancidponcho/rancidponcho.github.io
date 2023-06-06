@@ -62,11 +62,12 @@ class Holder {
     let dy = this.body.position.y - polygon.position.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
     this.linearForce(polygon, distance, dx, dy); // apply linear force
-    if (distance < 100) {
+    let maxDistance = 50; // maximum distance at which the article should be completely transparent
+
+    if (distance < maxDistance) {
       this.negateGravity(polygon);
       this.angularForce(polygon, distance);
 
-      let maxDistance = 50; // maximum distance at which the article should be completely transparent
       let mean = 0; // mean of the Gaussian distribution
       let standardDeviation = maxDistance / 3; // standard deviation of the Gaussian distribution
       let opacity = Math.exp(

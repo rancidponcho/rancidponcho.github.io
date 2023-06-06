@@ -1,16 +1,30 @@
 <article>
-  <h1>Understanding a Neural Network Node Implementation in C++</h1>
+  <h1>Exploring the Nature of Neural Networks with C++</h1>
+
+  <img
+    src="images/node_network.png"
+    alt="Node Network"
+    style="
+      width: 100%;
+      display: block;
+      margin: 0 auto;
+      background-color: transparent;
+    "
+  />
   <p>2023-05-22</p>
+
   <p>
-    The presented C++ code provides an implementation of a node in a neural
-    network. This article delves into the details of this implementation,
-    breaking down the underlying concepts, the design of the code, and its
-    purpose.
+    In this article, I will share with you a C++ code that implements a single
+    node in a neural network. This code is not meant to be a practical tool for
+    building neural networks, but rather a mental exercise for understanding the
+    underlying nature and mathematics of these fascinating models. I will also
+    give you some historical background on how neural networks came to be and
+    how they evolved over time.
   </p>
   <h4>Background</h4>
   <p>
     Neural networks are a subfield of artificial intelligence inspired by the
-    human brain's structure. They consist of interconnected nodes, often called
+    human brain’s structure. They consist of interconnected nodes, often called
     neurons or units, which process and pass on information in a layered
     structure. Each node receives inputs from nodes in the previous layer,
     applies weights to these inputs, adds a bias term, and then applies a
@@ -24,6 +38,26 @@
     propagating it back through the network to adjust the weights and biases is
     called backpropagation.
   </p>
+  <p>
+    The idea of neural networks dates back to 1943, when Warren McCulloch, a
+    neurophysiologist, and Walter Pitts, a mathematician, published a paper
+    describing how neurons might work and how they could perform logical
+    operations using electrical circuits1. They called this model threshold
+    logic. Later, in 1949, Donald Hebb, a Canadian psychologist, proposed a
+    learning rule for how neurons could strengthen or weaken their connections
+    based on their activity2. This rule became known as Hebbian learning and is
+    considered one of the foundations of neural network theory.
+  </p>
+  <p>
+    However, it was not until 1958 that Frank Rosenblatt introduced the first
+    practical neural network model, called the perceptron3. The perceptron was a
+    simple network that consisted of n number of inputs, only one neuron, and
+    one output, where n is the number of features of our dataset. The perceptron
+    could learn to classify linearly separable patterns using an iterative
+    algorithm that updated the weights and biases based on the errors. The
+    perceptron was also able to generalize to unseen data and had some
+    biological plausibility.
+  </p>
   <h4>Code Overview</h4>
   <p>
     The provided code encompasses two main files: main.cpp, which contains the
@@ -35,16 +69,15 @@
     The Value class represents a node in a neural network. Each instance of the
     Value class contains properties that define a neural network node:
   </p>
-  <p>
-    _data: Represents the value of the node. It could be the input value (for
-    input nodes), the weight, the bias, or the output value (for output nodes).
-    _grad: Holds the gradient of the node, which is used during backpropagation.
-    _prev: Stores pointers to the nodes that provide input to the current node.
-    _op: Stores the operation that generates this node, e.g., "+", "*", or
-    "tanh". _label: A label for the node, which is useful for identifying the
-    node during debugging or visualization. _backward: A function object that
-    holds the operation to perform during backpropagation.
-  </p>
+
+  _data: Represents the value of the node. It could be the input value (for
+  input nodes), the weight, the bias, or the output value (for output nodes).
+  _grad: Holds the gradient of the node, which is used during backpropagation.
+  _prev: Stores pointers to the nodes that provide input to the current node.
+  _op: Stores the operation that generates this node, e.g., “+”, “*”, or “tanh”.
+  _label: A label for the node, which is useful for identifying the node during
+  debugging or visualization. _backward: A function object that holds the
+  operation to perform during backpropagation.
   <p>
     The Value class also contains several methods for carrying out operations
     like addition, multiplication, and applying the hyperbolic tangent function
@@ -55,11 +88,11 @@
     The backward method carries out backpropagation for the node. It first
     creates a topological sort of the computation graph (a sequence of nodes in
     which each node appears before all the nodes it points to), then for each
-    node in this sequence, it calls the node's _backward function.
+    node in this sequence, it calls the node’s _backward function.
   </p>
   <p>
     The graph method prints a visual representation of the computation graph,
-    displaying each node's label, value, gradient, and operation.
+    displaying each node’s label, value, gradient, and operation.
   </p>
   <h5>main.cpp</h5>
   <p>
@@ -67,41 +100,32 @@
     carries out a forward pass and a backward pass.
   </p>
   <p>In the forward pass, the function:</p>
+
+  Initializes two input nodes (x1 and x2), two weight nodes (w1 and w2), and a
+  bias node (b). Calculates the dot product of the inputs and weights, adding
+  the results (x1w1 and x2w2) and the bias to get n. Applies the tanh activation
+  function to n to get y_hat, which is the predicted output. Computes the mean
+  squared error (MSE) between y_hat and y, which is the actual output.
+  <p>In the backward pass, the function:</p>
+
+  Calls the backward method on y_hat, which triggers backpropagation for all the
+  nodes in the computation graph. Prints the gradients of each node using the
+  graph method. Updates the weights and biases using gradient descent with a
+  learning rate of 0.01.
+  <h4>Conclusion</h4>
   <p>
-    Initializes two input nodes (x1 and x2), two weight nodes (w1 and w2), and a
-    bias node (b). Calculates the dot product of the inputs and weights, adding
-    the results (x1w1 and x2w2) and the bias to get n. Applies the tanh
-    activation function to n to get the output o.
+    In this article, I have shown you how to implement a single node in a neural
+    network using C++. This code is not meant to be efficient or scalable, but
+    rather to illustrate the basic concepts and mathematics behind neural
+    networks. I have also given you some historical background on how neural
+    networks were developed and how they evolved over time. I hope you enjoyed
+    this article and learned something new from it. If you have any questions or
+    feedback, please feel free to leave a comment below. Thank you for reading!
   </p>
-  <p>
-    In the backward pass, it calls the backward method on the output node o to
-    propagate gradients back through the computation graph. Finally, it prints
-    out the computation graph using the graph method.
-  </p>
-  <h5>Purpose and Use Cases</h5>
-  <p>
-    This code's purpose is to create a flexible and reusable class (Value) that
-    canrepresent a node in a neural network. The design is such that one can
-    easily set up a simple neural network, perform a forward pass to calculate
-    outputs, and carry out backpropagation for learning.
-  </p>
-  <p>
-    While this example demonstrates a single node, it's easy to imagine how this
-    could be scaled up to a full network. Each node in the network would be an
-    instance of the Value class, linked to other Value instances in the layers
-    above and below. This design makes the code extremely flexible and
-    customizable, allowing the user to set up neural networks of any
-    architecture they wish.
-  </p>
-  <p>
-    This code can serve as a foundation for a broad range of applications, from
-    simple regression or classification tasks to more complex tasks such as
-    image recognition, natural language processing, or reinforcement learning,
-    depending on the design of the neural network built using the Value class.
-  </p>
-  <p>
-    In summary, this code provides a compact yet powerful tool for representing
-    neural networks and performing fundamental neural network operations, laying
-    the groundwork for a wide range of AI applications.
-  </p>
+
+  : McCulloch WS, Pitts W. A logical calculus of ideas immanent in nervous
+  activity. Bulletin of Mathematical Biophysics. 1943;5:115–133. : Hebb DO. The
+  Organization of Behavior: A Neuropsychological Theory. New York: Wiley; 1949.
+  : Rosenblatt F. The perceptron: A probabilistic model for information storage
+  and organization in the brain. Psychological Review. 1958;65(6):386–408.
 </article>
