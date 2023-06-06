@@ -1,5 +1,22 @@
 <article>
   <h1>Autograd - Neurons in C++</h1>
+  <div style="position: relative">
+    <img
+      src="images/node_network.png"
+      alt="Node Network"
+      style="
+        width: 100vw;
+        position: absolute;
+        left: -31%;
+        top: 61.8px;
+        display: block;
+        margin: 0 auto;
+        background-color: transparent;
+        z-index: -0.5;
+        opacity: 0.1;
+      "
+    />
+  </div>
   <img
     src="images/node_network.png"
     alt="Node Network"
@@ -7,29 +24,12 @@
       width: 100vw;
       position: absolute;
       left: -31%;
-      top: 0;
+      top: 1815px;
       display: block;
       margin: 0 auto;
       background-color: transparent;
       z-index: -0.5;
       opacity: 0.1;
-      top: 15vh;
-    "
-  />
-  <img
-    src="images/node_network.png"
-    alt="Node Network"
-    style="
-      width: 100vw;
-      position: absolute;
-      left: -31%;
-      top: 0;
-      display: block;
-      margin: 0 auto;
-      background-color: transparent;
-      z-index: -0.5;
-      opacity: 0.1;
-      top: 190vh;
       transform: scaleX(-1);
     "
   />
@@ -40,13 +40,12 @@
       width: 100vw;
       position: absolute;
       left: -31%;
-      top: 0;
+      top: 3300px;
       display: block;
       margin: 0 auto;
       background-color: transparent;
       z-index: -0.5;
       opacity: 0.1;
-      top: 340vh;
       transform: scaleY(-1);
     "
   />
@@ -182,9 +181,8 @@
   <div
     style="
       width: vw + vh;
-      margin: auto;
       background-color: rgba(255, 230, 255, 0.5);
-      border-radius: 25px;
+      border-radius: 10px;
       border: 2px solid rgb(255, 230, 255, 1);
     "
   >
@@ -193,35 +191,35 @@
     white-space: pre;
     font-size: vw + vh; 
     ">
-  #include "value.hpp"
-
-  int main() &lbrace;
-      Value x1&lbrace;2.0, "x1"&rbrace;;
-      Value x2&lbrace;0.0, "x2"&rbrace;;
-      // weights
-      Value w1&lbrace;-3.0, "w1"&rbrace;;
-      Value w2&lbrace;1.0, "w2"&rbrace;;
-      // bias
-      Value b&lbrace;5.8813735870195432, "b"&rbrace;;
-      // dot product
-      Value x1w1 = x1 * w1;
-      x1w1.label("x1w1");
-      Value x2w2 = x2 * w2;
-      x2w2.label("x2w2");
-      Value x1w1_x2w2 = x1w1 + x2w2;
-      x1w1_x2w2.label("x1w1 + x2w2");
-      // add bias
-      Value n = x1w1_x2w2 + b;
-      n.label("n");
-      // output
-      Value o = n.tanh();
-      o.label("o");
-      
-      o.backward();
-      o.graph();
-
-      return 0;
-  &rbrace;
+ #include "value.hpp"
+ 
+ int main() &lbrace;
+     Value x1&lbrace;2.0, "x1"&rbrace;;
+     Value x2&lbrace;0.0, "x2"&rbrace;;
+     // weights
+     Value w1&lbrace;-3.0, "w1"&rbrace;;
+     Value w2&lbrace;1.0, "w2"&rbrace;;
+     // bias
+     Value b&lbrace;5.8813735870195432, "b"&rbrace;;
+     // dot product
+     Value x1w1 = x1 * w1;
+     x1w1.label("x1w1");
+     Value x2w2 = x2 * w2;
+     x2w2.label("x2w2");
+     Value x1w1_x2w2 = x1w1 + x2w2;
+     x1w1_x2w2.label("x1w1 + x2w2");
+     // add bias
+     Value n = x1w1_x2w2 + b;
+     n.label("n");
+     // output
+     Value o = n.tanh();
+     o.label("o");
+     
+     o.backward();
+     o.graph();
+ 
+     return 0;
+ &rbrace;
     </code>
   </div>
   <p>
@@ -238,24 +236,23 @@
   <div
     style="
       width: vw + vh;
-      margin: auto;
       background-color: rgba(255, 230, 255, 0.5);
-      border-radius: 25px;
+      border-radius: 10px;
       border: 2px solid rgb(255, 230, 255, 1);
     "
   >
     <!-- prettier-ignore -->
     <code style="white-space: pre;">
-  +---o[ -0.1181 ][ 1.0000 ](tanh)
-      +---n[ -0.1186 ][ 0.9861 ](+)
-          +---x1w1 + x2w2[ -6.0000 ][ 0.9861 ](+)
-              +---x1w1[ -6.0000 ][ 0.9861 ](*)
-                  +---x1[ 2.0000 ][ -2.9582 ]
-                  +---w1[ -3.0000 ][ 1.9721 ]
-              +---x2w2[ 0.0000 ][ 0.9861 ](*)
-                  +---x2[ 0.0000 ][ 0.9861 ]
-                  +---w2[ 1.0000 ][ 0.0000 ]
-        +---b[ 5.8814 ][ 0.9861 ]
+ +---o[ -0.1181 ][ 1.0000 ](tanh)
+     +---n[ -0.1186 ][ 0.9861 ](+)
+         +---x1w1 + x2w2[ -6.0000 ][ 0.9861 ](+)
+             +---x1w1[ -6.0000 ][ 0.9861 ](*)
+                 +---x1[ 2.0000 ][ -2.9582 ]
+                 +---w1[ -3.0000 ][ 1.9721 ]
+             +---x2w2[ 0.0000 ][ 0.9861 ](*)
+                 +---x2[ 0.0000 ][ 0.9861 ]
+                 +---w2[ 1.0000 ][ 0.0000 ]
+       +---b[ 5.8814 ][ 0.9861 ]
     </code>
   </div>
   <p>
