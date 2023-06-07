@@ -58,7 +58,8 @@ article code {
 
 article ul {
   list-style-type: square;
-  margin-right: 15%;
+  margin-right: 7.5%;
+  margin-left: -7.5%;
 }
 
 li {
