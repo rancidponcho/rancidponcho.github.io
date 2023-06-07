@@ -31,74 +31,75 @@
   </p>
   <ul>
     <li>
-      _data: Actual value of the object as a float. It is initialized by the
-      constructor and can be changed by the set_data method.
+      <b>_data:</b> Actual value of the object as a float. It is initialized by
+      the constructor and can be changed by the set_data method.
     </li>
     <li>
-      _grad: Gradient of the object with respect to the output as a float. It is
-      initialized to zero by the constructor and updated by the backward method.
-      It can be accessed by the get_grad method or changed by the grad method.
+      <b>_grad:</b> Gradient of the object with respect to the output as a
+      float. It is initialized to zero by the constructor and updated by the
+      backward method. It can be accessed by the get_grad method or changed by
+      the grad method.
     </li>
     <li>
-      _prev: Vector of pointers to the previous values that were used to create
-      this value by some operation. It is initialized by the constructor and can
-      be accessed by the get_prev method.
+      <b>_prev:</b> Vector of pointers to the previous values that were used to
+      create this value by some operation. It is initialized by the constructor
+      and can be accessed by the get_prev method.
     </li>
     <li>
-      _op: String that represents the operation that was used to create this
-      value from its previous values. It is initialized by the constructor and
-      can be accessed by the get_op method.
+      <b>_op:</b> String that represents the operation that was used to create
+      this value from its previous values. It is initialized by the constructor
+      and can be accessed by the get_op method.
     </li>
     <li>
-      _label: String that represents a human-readable label for this value. It
-      is initialized by the constructor and can be changed by the operator= or
-      label methods. It can be accessed by the get_label method.
+      <b>_label:</b> String that represents a human-readable label for this
+      value. It is initialized by the constructor and can be changed by the
+      operator= or label methods. It can be accessed by the get_label method.
     </li>
     <li>
-      _backward: Stores a function object that defines how to update the
+      <b>_backward:</b> Stores a function object that defines how to update the
       gradients of the previous values based on this value&apos;s gradient and
       operation. It is initialized by each operation method (+, *, tanh, etc.)
       and executed by the backward method.
     </li>
     <li>
-      operator&lt;&lt;: For printing a value to an output stream. It prints the
-      label and data of the value.
+      <b>operator&lt;&lt;:</b> For printing a value to an output stream. It
+      prints the label and data of the value.
     </li>
     <li>
-      operator+: For adding two values together. It creates a new value with the
-      sum of the data of both values, and sets its previous values and operation
-      accordingly. It also defines its backward function as adding its gradient
-      to both previous values&apos; gradients.
+      <b>operator+:</b> For adding two values together. It creates a new value
+      with the sum of the data of both values, and sets its previous values and
+      operation accordingly. It also defines its backward function as adding its
+      gradient to both previous values&apos; gradients.
     </li>
     <li>
-      operator*: For multiplying two values together. It creates a new value
-      with the product of the data of both values, and sets its previous values
-      and operation accordingly. It also defines its backward function as
+      <b>operator*:</b> For multiplying two values together. It creates a new
+      value with the product of the data of both values, and sets its previous
+      values and operation accordingly. It also defines its backward function as
       multiplying its gradient by each previous value&apos;s data and adding it
       to their gradients.
     </li>
     <li>
-      operator+=: For adding another value to this value in place. It updates
-      this value&apos;s data with the sum of both values&apos; data, and adds
-      the other value to its previous values and operation. It also updates its
-      backward function accordingly.
+      <b>operator+=:</b> For adding another value to this value in place. It
+      updates this value&apos;s data with the sum of both values&apos; data, and
+      adds the other value to its previous values and operation. It also updates
+      its backward function accordingly.
     </li>
     <li>
-      tanh: Applies the tanh activation function to this value and returns a new
-      value with the result. It sets its previous value and operation
-      accordingly. It also defines its backward function as multiplying its
-      gradient by (1 - tanh^2) and adding it to its previous value&apos;s
-      gradient.
+      <b>tanh:</b> Applies the tanh activation function to this value and
+      returns a new value with the result. It sets its previous value and
+      operation accordingly. It also defines its backward function as
+      multiplying its gradient by (1 - tanh^2) and adding it to its previous
+      value&apos;s gradient.
     </li>
     <li>
-      backward: Performs automatic differentiation on this value and updates all
-      its previous values&apos; gradients recursively. It starts with setting
-      this value&apos;s gradient to 1, then calls its backward function, which
-      in turn calls all its previous values&apos; backward functions, until it
-      reaches the input values that have no previous values.
+      <b>backward:</b> Performs automatic differentiation on this value and
+      updates all its previous values&apos; gradients recursively. It starts
+      with setting this value&apos;s gradient to 1, then calls its backward
+      function, which in turn calls all its previous values&apos; backward
+      functions, until it reaches the input values that have no previous values.
     </li>
     <li>
-      graph: Prints a graphical representation of this value and all its
+      <b>graph:</b> Prints a graphical representation of this value and all its
       previous values recursively, showing their data, gradient, operation, and
       label. It uses an unordered set to keep track of which values have been
       visited already, to avoid infinite loops in case of cycles in the graph.
@@ -142,35 +143,35 @@
       <code style="
         white-space: pre;
         ">
-#include "value.hpp"
+    #include "value.hpp"
 
-int main() {
-    Value x1{2.0, "x1"};
-    Value x2{0.0, "x2"};
-    // weights
-    Value w1{-3.0, "w1"};
-    Value w2{1.0, "w2"};
-    // bias
-    Value b{5.8813735870195432, "b"};
-    // dot product
-    Value x1w1 = x1 * w1;
-    x1w1.label("x1w1");
-    Value x2w2 = x2 * w2;
-    x2w2.label("x2w2");
-    Value x1w1_x2w2 = x1w1 + x2w2;
-    x1w1_x2w2.label("x1w1 + x2w2");
-    // add bias
-    Value n = x1w1_x2w2 + b;
-    n.label("n");
-    // output
-    Value o = n.tanh();
-    o.label("o");
-    
-    o.backward();
-    o.graph();
+    int main() {
+        Value x1{2.0, "x1"};
+        Value x2{0.0, "x2"};
+        // weights
+        Value w1{-3.0, "w1"};
+        Value w2{1.0, "w2"};
+        // bias
+        Value b{5.8813735870195432, "b"};
+        // dot product
+        Value x1w1 = x1 * w1;
+        x1w1.label("x1w1");
+        Value x2w2 = x2 * w2;
+        x2w2.label("x2w2");
+        Value x1w1_x2w2 = x1w1 + x2w2;
+        x1w1_x2w2.label("x1w1 + x2w2");
+        // add bias
+        Value n = x1w1_x2w2 + b;
+        n.label("n");
+        // output
+        Value o = n.tanh();
+        o.label("o");
+        
+        o.backward();
+        o.graph();
 
-    return 0;
-}
+        return 0;
+    }
         </code>
     </div>
     <div class="paragraphs">
@@ -193,16 +194,16 @@ int main() {
     style="  
     white-space: pre;
     ">
-+---o[ -0.1181 ][ 1.0000 ](tanh)
-    +---n[ -0.1186 ][ 0.9861 ](+)
-        +---x1w1 + x2w2[ -6.0000 ][ 0.9861 ](+)
-            +---x1w1[ -6.0000 ][ 0.9861 ](*)
-                +---x1[ 2.0000 ][ -2.9582 ]
-                +---w1[ -3.0000 ][ 1.9721 ]
-            +---x2w2[ 0.0000 ][ 0.9861 ](*)
-                +---x2[ 0.0000 ][ 0.9861 ]
-                +---w2[ 1.0000 ][ 0.0000 ]
-      +---b[ 5.8814 ][ 0.9861 ]
+    +---o[ -0.1181 ][ 1.0000 ](tanh)
+        +---n[ -0.1186 ][ 0.9861 ](+)
+            +---x1w1 + x2w2[ -6.0000 ][ 0.9861 ](+)
+                +---x1w1[ -6.0000 ][ 0.9861 ](*)
+                    +---x1[ 2.0000 ][ -2.9582 ]
+                    +---w1[ -3.0000 ][ 1.9721 ]
+                +---x2w2[ 0.0000 ][ 0.9861 ](*)
+                    +---x2[ 0.0000 ][ 0.9861 ]
+                    +---w2[ 1.0000 ][ 0.0000 ]
+          +---b[ 5.8814 ][ 0.9861 ]
     </code>
   </div>
   <p>
