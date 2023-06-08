@@ -109,12 +109,7 @@ class Controller {
       let dy = mousePosition.y - body.position.y;
       let distance = Math.sqrt(dx * dx + dy * dy);
       let A, B, C; // peak height, pos of peak, distribution width
-      if (body == holder.selectedKey) {
-        // key in holder has smaller force radius to prevent falling out during mobile scrolling
-        A = 0.00075;
-        B = 0;
-        C = 50;
-      } else if (body === this.selectedPoly) {
+      if (body === this.selectedPoly) {
         // selected poly gets greater attraction
         A = 0.0005;
         B = 0;

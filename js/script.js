@@ -55,17 +55,17 @@ let articleIDs = [
   "article6",
 ];
 // gravity
-keys.push(new window.Key(engine, 3, "rgba(172, 0, 172)", "antigravity"));
+keys.push(new window.Key(engine, 3, randomPastelColor(), "antigravity"));
 // antigravity
-keys.push(new window.Key(engine, 4, "rgba(172, 172, 0)", "gravity"));
+keys.push(new window.Key(engine, 3, randomPastelColor(), "gravity"));
 // repulsive gravity
-keys.push(new window.Key(engine, 5, "rgba(0, 172, 172)", "repulsive"));
+keys.push(new window.Key(engine, 3, randomPastelColor(), "repulsive"));
 // autograd
-keys.push(new window.Key(engine, 3, randomPastelColor(), articleIDs[0]));
+keys.push(new window.Key(engine, 4, randomPastelColor(), articleIDs[0]));
 //sierpinski
-keys.push(new window.Key(engine, 4, randomPastelColor(), articleIDs[1]));
+keys.push(new window.Key(engine, 5, randomPastelColor(), articleIDs[1]));
 // 2d grav vec field
-keys.push(new window.Key(engine, 5, randomPastelColor(), articleIDs[2]));
+keys.push(new window.Key(engine, 6, randomPastelColor(), articleIDs[2]));
 
 // let lastTimestep = 0;
 // let frameCount = 0;

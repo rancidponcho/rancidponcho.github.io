@@ -108,8 +108,9 @@ li {
   }
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 1250px) {
   #article-container {
     width: 750px;
+    left: 25%;
   }
 }

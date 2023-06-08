@@ -37,9 +37,16 @@ class Key {
   }
 
   respawn() {
-    if (this.body.position.y > render.canvas.height + 50) {
+    if (
+      this.body.position.y > render.canvas.height + 50 ||
+      this.body.position.x < -50 ||
+      this.body.position.x > render.canvas.width + 50
+    ) {
       Matter.Body.setPosition(this.body, {
-        x: randomGaussian(render.options.width, render.options.width),
+        x: randomGaussian(
+          render.options.width * 0.5,
+          render.options.width * 0.1
+        ),
         y: Math.random() * -100 - 50,
       });
       Matter.Body.setVelocity(this.body, { x: 0, y: 0 });
