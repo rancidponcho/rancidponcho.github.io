@@ -58,12 +58,12 @@ article code {
 
 article ul {
   list-style-type: square;
-  margin-right: 7.5%;
-  margin-left: -7.5%;
+  margin-right: 25px;
+  margin-left: -25px;
 }
 
 li {
-  margin: 5%;
+  margin: 10px;
 }
 
 .fade-out {
@@ -91,10 +91,10 @@ li {
 
 @media (max-width: 600px) {
   #article-container {
-    font-size: 14px;
+    font-size: 12px;
   }
   .code {
-    font-size: 10px;
+    font-size: 8px;
   }
 }
 
