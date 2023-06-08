@@ -1,0 +1,80 @@
+<article>
+  <h1 style="font-size: 35px">
+    Gravity Simulation and 2D Gravity Vector Field
+  </h1>
+  <p>
+    Gravity is one of the fundamental forces of nature that attracts every
+    object with mass to every other object with mass. To study the effects of
+    gravity on different objects, we can use computer simulations that model the
+    gravitational force and the motion of the objects under its influence.
+  </p>
+  <p>
+    One such simulation can be found
+    <a
+      href="https://github.com/rancidponcho/GravityVecField"
+      style="
+        pointer-events: all;
+        color: darkgoldenrod;
+        font-weight: bold;
+        text-decoration: none;
+      "
+      >here</a
+    >, which uses C++ and OpenGL to create a 2D gravity vector field and a
+    gravity physics system. A vector field is a map of vectors that assigns a
+    vector to each point in a plane or space. The vector represents the
+    direction and magnitude of a certain quantity, such as force, velocity, or
+    acceleration. A 2D gravity vector field shows how the gravitational force
+    varies at different points in a plane.
+  </p>
+  <p>
+    The simulation uses a class called GravityPhysicsSystem that takes a
+    parameter for the strength of gravity and has a method called update that
+    takes a vector of objects, a time step, and a number of substeps. The update
+    method loops through all pairs of objects and applies the attractive force
+    between them using the formula:
+  </p>
+  <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"
+    ><semantics
+      ><mrow
+        ><mi>F</mi><mo>=</mo
+        ><mfrac
+          ><mrow
+            ><mi>G</mi><msub><mi>m</mi><mn>1</mn></msub
+            ><msub><mi>m</mi><mn>2</mn></msub></mrow
+          ><msup><mi>r</mi><mn>2</mn></msup></mfrac
+        ></mrow
+      ><annotation encoding="application/x-tex"
+        >F = \frac{Gm_1m_2}{r^2}
+      </annotation></semantics
+    ></math
+  >
+  <p>
+    where F is the force, G is the gravitational constant, m1 and m2 are the
+    masses of the objects, and r is the distance between them. The method also
+    updates the position of each object based on its velocity using Euler’s
+    method.
+  </p>
+  <p>
+    The simulation also uses a class called SveGameObject that represents an
+    object with a 2D transform (translation, rotation, and scale) and a 2D rigid
+    body (mass and velocity). The objects are rendered as colorful circles with
+    different sizes depending on their mass. The simulation shows the 2D gravity
+    vector field as a grid of arrows that point towards the center of mass of
+    all the objects.
+  </p>
+  <p>EXPLAIN HOW TO CHANGE THE INITIAL TRIJECTORY/ADD MORE OBJECTS</p>
+  <img src="images/fat_cat.jpeg" alt="fat cat" />
+  <p>
+    The simulation demonstrates some interesting phenomena related to gravity,
+    such as orbital motion, gravitational slingshot, and gravitational collapse.
+    The user can experiment with different scenarios by changing the number,
+    mass, and velocity of the objects.
+  </p>
+  <p>
+    The simulation is a fun and educational way to explore gravity and its
+    effects on different objects. It can also be used as a starting point for
+    further development and improvement, such as adding more features,
+    optimizing performance, or extending it to 3D. The source code is available
+    on GitHub for anyone who wants to try it out or modify it.
+  </p>
+</article>

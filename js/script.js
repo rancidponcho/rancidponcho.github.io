@@ -48,13 +48,13 @@ let platform = new window.Platform(
 let keys = [];
 let articleIDs = [
   "autograd",
-  "namegen",
-  "article3",
+  "sierpinski",
+  "gravity",
   "article4",
   "article5",
   "article6",
 ];
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 3; i++) {
   let key = new window.Key(engine, articleIDs[i]);
   keys.push(key);
 }

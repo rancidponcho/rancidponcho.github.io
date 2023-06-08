@@ -1,0 +1,78 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
+#include <glm/glm.hpp>
+
+// A struct to represent a vertex with a position
+struct Vertex {
+    glm::vec2 position;
+};
+
+// A function to draw a Sierpinski triangle using random points
+void DrawSierpinskiTriangle(std::vector<Vertex> &vertices, int iterations) {
+    // Define the initial triangle with three vertices
+    Vertex v1 = {{0.0f, 0.0f}};
+    Vertex v2 = {{1.0f, 0.0f}};
+    Vertex v3 = {{0.5f, 0.866f}};
+    vertices.push_back(v1);
+    vertices.push_back(v2);
+    vertices.push_back(v3);
+
+    // Initialize a random seed
+    srand(time(NULL));
+
+    // Choose a random vertex as the starting point
+    int index = rand() % 3;
+    glm::vec2 point = vertices[index].position;
+
+    // Iterate for a given number of times
+    for (int i = 0; i < iterations; i++) {
+        // Choose another random vertex
+        index = rand() % 3;
+        glm::vec2 target = vertices[index].position;
+
+        // Find the midpoint between the current point and the target vertex
+        point = 0.5f * (point + target);
+
+        // Add the midpoint as a new vertex
+        Vertex v = {point};
+        vertices.push_back(v);
+    }
+}
+
+// A function to draw a Sierpinski triangle using recursion
+void DrawSierpinskiTriangle(std::vector<Vertex> &vertices, int depth, glm::vec2 left, glm::vec2 right, glm::vec2 top) {
+    if (depth <= 0) {
+        // Add the three vertices of the current triangle
+        vertices.push_back({top});
+        vertices.push_back({right});
+        vertices.push_back({left});
+    } else {
+        // Find the midpoints of the sides of the current triangle
+        auto leftTop = 0.5f * (left + top);
+        auto rightTop = 0.5f * (right + top);
+        auto leftRight = 0.5f * (left + right);
+
+        // Recursively draw the smaller triangles
+        DrawSierpinskiTriangle(vertices, depth - 1, left, leftRight, leftTop);
+        DrawSierpinskiTriangle(vertices, depth - 1, leftRight, right, rightTop);
+        DrawSierpinskiTriangle(vertices, depth - 1, leftTop, rightTop, top);
+    }
+}
+
+int main() {
+    // Create a vector to store the vertices
+    std::vector<Vertex> vertices;
+
+    // Choose one of the methods to draw the Sierpinski triangle
+    // DrawSierpinskiTriangle(vertices, 10000); // Random points method
+    DrawSierpinskiTriangle(vertices, 5, {0.0f, 0.0f}, {1.0f, 0.0f}, {0.5f, 0.866f}); // Recursion method
+
+    // Print the vertices to the console
+    for (auto v : vertices) {
+        std::cout << v.position.x << " " << v.position.y << "\n";
+    }
+
+    return 0;
+}
