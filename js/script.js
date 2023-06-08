@@ -58,8 +58,6 @@ let articleIDs = [
 keys.push(new window.Key(engine, 3, randomPastelColor(), "antigravity"));
 // antigravity
 keys.push(new window.Key(engine, 3, randomPastelColor(), "gravity"));
-// repulsive gravity
-keys.push(new window.Key(engine, 3, randomPastelColor(), "repulsive"));
 // autograd
 keys.push(new window.Key(engine, 4, randomPastelColor(), articleIDs[0]));
 //sierpinski
