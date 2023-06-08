@@ -49,15 +49,23 @@ let keys = [];
 let articleIDs = [
   "autograd",
   "sierpinski",
-  "gravity",
+  "gravvecfield",
   "article4",
   "article5",
   "article6",
 ];
-for (let i = 0; i < 3; i++) {
-  let key = new window.Key(engine, articleIDs[i]);
-  keys.push(key);
-}
+// gravity
+keys.push(new window.Key(engine, 3, "rgba(172, 0, 172)", "antigravity"));
+// antigravity
+keys.push(new window.Key(engine, 4, "rgba(172, 172, 0)", "gravity"));
+// repulsive gravity
+keys.push(new window.Key(engine, 5, "rgba(0, 172, 172)", "repulsive"));
+// autograd
+keys.push(new window.Key(engine, 3, randomPastelColor(), articleIDs[0]));
+//sierpinski
+keys.push(new window.Key(engine, 4, randomPastelColor(), articleIDs[1]));
+// 2d grav vec field
+keys.push(new window.Key(engine, 5, randomPastelColor(), articleIDs[2]));
 
 // let lastTimestep = 0;
 // let frameCount = 0;

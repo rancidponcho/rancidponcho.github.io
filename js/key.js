@@ -1,12 +1,11 @@
 class Key {
-  constructor(engine, ID) {
+  constructor(engine, sides, color, ID) {
     this.radius =
       render.options.width * 0.08 < 50 ? render.options.width * 0.08 : 50;
-    this.sides = randInt(3, 6);
     this.body = Matter.Bodies.polygon(
       randomGaussian(render.options.width * 0.5, render.options.width * 0.1),
       Math.random() * -1000,
-      this.sides,
+      sides,
       this.radius,
       {
         density: 0.001,
@@ -14,7 +13,7 @@ class Key {
         restitution: 0.9,
         friction: 0.01,
         render: {
-          fillStyle: randomPastelColor(),
+          fillStyle: color,
         },
       }
     );
@@ -40,11 +39,8 @@ class Key {
   respawn() {
     if (this.body.position.y > render.canvas.height + 50) {
       Matter.Body.setPosition(this.body, {
-        x: randomGaussian(
-          render.options.width * 0.5,
-          render.options.width * 0.1
-        ),
-        y: Math.random() * -1000,
+        x: randomGaussian(render.options.width, render.options.width),
+        y: Math.random() * -100 - 50,
       });
       Matter.Body.setVelocity(this.body, { x: 0, y: 0 });
       Matter.Body.setAngle(this.body, Math.random());

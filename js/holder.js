@@ -62,7 +62,7 @@ class Holder {
     let dy = this.body.position.y - polygon.position.y;
     let distance = Math.sqrt(dx * dx + dy * dy);
     this.linearForce(polygon, distance, dx, dy); // apply linear force
-    let maxDistance = 50; // maximum distance at which the article should be completely transparent
+    let maxDistance = 100; // maximum distance at which the article should be completely transparent
 
     if (distance < maxDistance) {
       this.negateGravity(polygon);
@@ -73,12 +73,54 @@ class Holder {
       let opacity = Math.exp(
         -Math.pow(distance - mean, 2) / (2 * Math.pow(standardDeviation, 2))
       );
+      // enable special effects for certain keys
+      if (polygon.articleID == "antigravity") {
+        // if antigravity block
+        this.engine.world.gravity.y = 0;
+      } else if (
+        polygon.articleID === "gravity" ||
+        polygon.articleID === "repulsive"
+      ) {
+        let posorneg = -1;
+        if (polygon.articleID === "repulsive") {
+          posorneg = 1;
+        }
+        this.engine.world.gravity.y = 0;
+        Matter.Composite.allBodies(this.engine.world).forEach((body1) => {
+          Matter.Composite.allBodies(this.engine.world).forEach((body2) => {
+            if (
+              body1 !== body2 &&
+              body1 !== this.selectedKey &&
+              body2 !== this.selectedKey &&
+              body1 !== this.body &&
+              body2 !== this.body &&
+              body1 !== platform.body &&
+              body2 !== platform.body
+            ) {
+              let dx = body1.position.x - body2.position.x;
+              let dy = body1.position.y - body2.position.y;
+              let distanceSquared = dx * dx + dy * dy;
+              let distance = Math.sqrt(distanceSquared);
+              let forceMagnitude =
+                (posorneg * (body1.mass * body2.mass)) / distanceSquared;
+
+              Matter.Body.applyForce(body1, body1.position, {
+                x: (dx / distance) * forceMagnitude,
+                y: (dy / distance) * forceMagnitude,
+              });
+            }
+          });
+        });
+      } else {
+        this.displayArticle(polygon.articleID);
+      }
       controller.articleContainer.style.opacity = opacity;
-      this.displayArticle(polygon.articleID);
+
       platform.hide();
       this.isHolding = true;
       this.selectedKey = polygon;
     } else {
+      this.engine.world.gravity.y = 1; // reset gravity
       this.removeArticle();
       platform.show();
       this.isHolding = false;
