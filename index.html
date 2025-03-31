@@ -6,9 +6,25 @@
     <title>Graduation Information</title>
 </head>
 <body style="margin:0;padding:0;overflow:hidden;">
-    <video autoplay loop controls style="width:100%;height:100%;object-fit:cover;">
+    <video id="rickroll" loop controls style="width:100%;height:100%;object-fit:cover;">
         <source src="https://ia800609.us.archive.org/3/items/RickAstleyNeverGonnaGiveYouUpVideoHD/Rick%20Astley%20-%20Never%20Gonna%20Give%20You%20Up%20%28Video%29-dQw4w9WgXcQ.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+
+    <script>
+        document.addEventListener('click', () => {
+            const video = document.getElementById('rickroll');
+            video.play();
+        });
+
+        // Try autoplay immediately
+        window.onload = () => {
+            const video = document.getElementById('rickroll');
+            video.play().catch(() => {
+                // If autoplay blocked, wait for any user interaction
+                document.body.insertAdjacentHTML('beforeend', '<div style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:9999;"></div>');
+            });
+        };
+    </script>
 </body>
 </html>
