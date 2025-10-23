@@ -4,13 +4,26 @@
     <meta charset="utf-8" />
     <title>Kaspar</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <style>
-        html, body { margin: 0; height: 100%; background: #0f1115; }
-        #world { display: block; width: 100vw; height: 100vh; }
+        html, body { 
+            margin: 0; 
+            height: 100%; 
+            background: #0f1115; 
+        }
+        #world { 
+            position: fixed; 
+            inset: 0;
+            width: 100vw; 
+            height: 100vh; 
+            display: block; 
+            touch-action: none;
+        }
     </style>
 
     <script src="matter.min.js"></script>
     <script defer src="script.js"></script>
+
 </head>
 <body>
     <canvas id="world"></canvas>

@@ -129,17 +129,27 @@ if (mqDark) {
     }
 }
 
-
 /*******************************************************************************
  *  Resize Handling (Canvas + Platform Rescale)
  *
- *  Browsers can resize at any moment. When that happens:
- *      1) The canvas must be resized so the simulation remains full-screen.
- *      2) The platform must be rescaled to match our chosen proportions.
+ *  Mobile browsers can change viewport dimensions at unpredictable times:
+ *  - Standard window resizes (desktop)
+ *  - Orientation changes (phones/tablets)
+ *  - Browser UI expansion/collapse (mobile toolbars sliding in/out)
  *
- *  We track the platform’s current size so we can apply a precise scale factor
- *  from its current dimensions to the new target dimensions, avoiding runaway
- *  scaling. After resizing, we re-center the body to maintain layout symmetry.
+ *  Because of this, we cannot rely on a single resize event. Instead, we:
+ *      1) Listen to multiple viewport signals (resize, orientationchange,
+ *         and visualViewport where available).
+ *      2) Use requestAnimationFrame to batch rapid events into a single
+ *         update, preventing over-scaling or jitter.
+ *      3) Resize the canvas so it continues to fill the screen.
+ *      4) Recompute the platform’s target dimensions as fractions of the
+ *         new viewport, then apply a precise scale factor from the current
+ *         size to the new size. This avoids cumulative distortion.
+ *      5) Re-center the platform to maintain a stable, symmetric layout.
+ *
+ *  The platform remains static in the physics world, preserving stable
+ *  collision behavior for falling objects even through rapid viewport changes.
  ******************************************************************************/
 let platW = PLATFORM_W;
 let platH = PLATFORM_H;
@@ -167,6 +177,13 @@ function resize() {
 }
 
 window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', ()=> {
+    resize();
+    setTimeout(resize, 250); // catch late toolbar/layout updates
+});
+if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', resize);
+}
 resize();
 
 
