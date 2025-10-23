@@ -86,6 +86,51 @@ World.add(world, platform);
 
 
 /*******************************************************************************
+ *  Theme Selection (Light/Dark via prefers-color-scheme)
+ *
+ *  Most modern browsers (Firefox, Chrome, Safari, iOS Safari) expose the user’s
+ *  color-scheme preference through the `(prefers-color-scheme: dark)` media
+ *  query. We read it with matchMedia for two reasons:
+ *    1) Initialize our colors correctly on first load.
+ *    2) Listen for changes at runtime (e.g., user flips dark mode).
+ *
+ *  We keep all render colors in a small theme map so the physics/logic remains
+ *  independent of presentation. Updating the renderer background and body
+ *  fillStyle is sufficient for Matter.js to render the new theme on the next
+ *  frame; no special flush is required.
+ ******************************************************************************/
+const THEME = {
+    light: {
+        bg: '#f8fafc',
+        platform: '#0f766e'
+    },
+    dark: {
+        bg: '#0f1115',
+        platform: '#9ae6b4'
+    }
+};
+
+function applyTheme(isDark) {
+    const palette = isDark ? THEME.dark : THEME.light;
+    render.options.background = palette.bg;
+    platform.render.fillStyle = palette.platform;
+}
+
+// media query + live updates with Safari fallback
+const mqDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+applyTheme(mqDark ? mqDark.matches : true); // default to dark if unavailable
+
+if (mqDark) {
+    // Modern browsers
+    if(mqDark.addEventListener){
+        mqDark.addEventListener('change',(e)=>applyTheme(e.matches));
+    }else if(mqDark.addListener){
+        mqDark.addListener((e)=>applyTheme(e.matches));
+    }
+}
+
+
+/*******************************************************************************
  *  Resize Handling (Canvas + Platform Rescale)
  *
  *  Browsers can resize at any moment. When that happens:
