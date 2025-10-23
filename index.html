@@ -10,14 +10,28 @@
             margin: 0; 
             height: 100%; 
             background: #0f1115; 
+            overscroll-behavior: none; /* suppress rubber-band glow */
         }
+
+        /* pin canvas edge-to-edge */
         #world { 
             position: fixed; 
             inset: 0;
-            width: 100vw; 
-            height: 100vh; 
             display: block; 
             touch-action: none;
+
+            /* fallbacks */
+            width: 100%; 
+            height: 100%; 
+            background: #0f1115; /* match page bg to avoid seam */
+        }
+
+        /* modern mobile: dynamic viewport units handle toolbars */
+        @supports (height: 100dvh) {
+            #world {
+                width: 100dvw;
+                height: 100dvh;
+            }
         }
     </style>
 
