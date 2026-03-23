@@ -1,45 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Kaspar</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Badge Message Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f7f7f7;
+      color: #222;
+    }
 
-    <style>
-        html, body { 
-            margin: 0; 
-            height: 100%; 
-            background: #0f1115; 
-            overscroll-behavior: none; /* suppress rubber-band glow */
-        }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
 
-        /* pin canvas edge-to-edge */
-        #world { 
-            position: fixed; 
-            inset: 0;
-            display: block; 
-            touch-action: none;
+    h1 {
+      margin-top: 0;
+      font-size: 1.6rem;
+    }
 
-            /* fallbacks */
-            width: 100%; 
-            height: 100%; 
-            background: #0f1115; /* match page bg to avoid seam */
-        }
+    .field {
+      margin-bottom: 16px;
+    }
 
-        /* modern mobile: dynamic viewport units handle toolbars */
-        @supports (height: 100dvh) {
-            #world {
-                width: 100dvw;
-                height: 100dvh;
-            }
-        }
-    </style>
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
 
-    <script src="matter.min.js"></script>
-    <script defer src="script.js"></script>
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
 
+    .output-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .output {
+      flex: 1;
+      min-width: 300px;
+      background: #f1f3f5;
+      padding: 12px;
+      border-radius: 8px;
+      word-break: break-word;
+    }
+
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .hint {
+      color: #555;
+      font-size: 0.95rem;
+      margin-top: -6px;
+      margin-bottom: 16px;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="world"></canvas>
-</body>
+  <div class="container">
+    <h1>Badge Message Generator</h1>
+
+    <div class="field">
+      <label for="nameInput">Name</label>
+      <input id="nameInput" type="text" placeholder="Enter a name" />
+    </div>
+
+    <div class="field">
+      <label for="codeInput">Numbers and letters</label>
+      <input id="codeInput" type="text" placeholder="Example: A12,B34,C56" />
+      <div class="hint">Separate values with commas. They will automatically be converted to periods.</div>
+    </div>
+
+    <div class="output-row">
+      <div class="output" id="badgingIn">FTI-  is badging in to -</div>
 </html>
