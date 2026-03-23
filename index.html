@@ -3,100 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Badge Message Generator</title>
+  <title>Badge in/out Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 40px;
-      background: #f7f7f7;
-      color: #222;
+      margin: 24px;
+      background: #f4f4f4;
     }
 
-    .container {
-      max-width: 900px;
+    .wrap {
+      max-width: 800px;
       margin: 0 auto;
-      background: white;
+      background: #fff;
       padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
     h1 {
       margin-top: 0;
-      font-size: 1.6rem;
-    }
-
-    .field {
-      margin-bottom: 16px;
     }
 
     label {
       display: block;
+      margin: 14px 0 6px;
       font-weight: bold;
-      margin-bottom: 6px;
     }
 
     input {
       width: 100%;
+      padding: 10px;
+      font-size: 16px;
       box-sizing: border-box;
-      padding: 10px 12px;
-      font-size: 1rem;
       border: 1px solid #ccc;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
-    .output-row {
+    .row {
       display: flex;
       gap: 10px;
       align-items: center;
-      margin-top: 14px;
-      flex-wrap: wrap;
+      margin-top: 16px;
     }
 
     .output {
       flex: 1;
-      min-width: 300px;
-      background: #f1f3f5;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 10px;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      min-height: 22px;
+      white-space: pre-wrap;
       word-break: break-word;
     }
 
     button {
       padding: 10px 14px;
+      font-size: 14px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 0.95rem;
-    }
-
-    button:hover {
-      opacity: 0.92;
-    }
-
-    .hint {
-      color: #555;
-      font-size: 0.95rem;
-      margin-top: -6px;
-      margin-bottom: 16px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Badge Message Generator</h1>
+  <div class="wrap">
+    <h1>Badge Generator</h1>
 
-    <div class="field">
-      <label for="nameInput">Name</label>
-      <input id="nameInput" type="text" placeholder="Name" />
+    <label for="name">Name</label>
+    <input id="name" type="text" placeholder="Enter name" />
+
+    <label for="codes">Location</label>
+    <input id="codes" type="text" placeholder="Enter address" />
+
+    <div class="row">
+      <div id="badgeIn" class="output">FTI-  is badging in to -</div>
+      <button id="copyIn">Copy</button>
     </div>
 
-    <div class="field">
-      <label for="codeInput">Numbers and letters</label>
-      <input id="codeInput" type="text" placeholder="Location" />
-      <div class="hint">Location/address</div>
+    <div class="row">
+      <div id="badgeOut" class="output">FTI-  is badging out of -</div>
+      <button id="copyOut">Copy</button>
     </div>
+  </div>
 
-    <div class="output-row">
-      <div class="output" id="badgingIn">FTI-  is badging in to -</div>
+  <script>
+    const nameInput = document.getElementById('name');
+    const codesInput = document.getElementById('codes');
+    const badgeIn = document.getElementById('badgeIn');
+    const badgeOut = document.getElementById('badgeOut');
+    const copyIn = document.getElementById('copyIn');
+    const copyOut = document.getElementById('copyOut');
+
+    function cleanCodes(value) {
+      return value
+        .split(',')
+        .map(v => v.trim())
+        .filter(v => v !== '')
+        .join('.');
+    }
+
+    function updateText() {
+      const name = nameInput.value.trim();
+      const codes = cleanCodes(codesInput.value);
+
+      badgeIn.textContent = `FTI- ${name} is badging in to -${codes}`;
+      badgeOut.textContent = `FTI- ${name} is badging out off -${codes}`;
+    }
+
+    async function copyToClipboard(text, button) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+
+      const old = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => {
+        button.textContent = old;
+      }, 1000);
+    }
+
+    nameInput.addEventListener('input', updateText);
+    codesInput.addEventListener('input', updateText);
+
+    copyIn.addEventListener('click', () => copyToClipboard(badgeIn.textContent, copyIn));
+    copyOut.addEventListener('click', () => copyToClipboard(badgeOut.textContent, copyOut));
+
+    updateText();
+  </script>
+</body>
 </html>
+
+
