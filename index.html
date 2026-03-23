@@ -87,57 +87,56 @@
     </div>
   </div>
 
-  <script>
-    const nameInput = document.getElementById('name');
-    const codesInput = document.getElementById('codes');
-    const badgeIn = document.getElementById('badgeIn');
-    const badgeOut = document.getElementById('badgeOut');
-    const copyIn = document.getElementById('copyIn');
-    const copyOut = document.getElementById('copyOut');
+<script>
+  const nameInput = document.getElementById('name');
+  const codesInput = document.getElementById('codes');
+  const badgeIn = document.getElementById('badgeIn');
+  const badgeOut = document.getElementById('badgeOut');
+  const copyIn = document.getElementById('copyIn');
+  const copyOut = document.getElementById('copyOut');
 
-    function cleanCodes(value) {
-      return value
-        .split(',')
-        .map(v => v.trim())
-        .filter(v => v !== '')
-        .join('.');
+  function cleanCodes(value) {
+    return value
+      .trim()
+      .replace(/,\s*-\s*$/, '')   // removes ",-" from the end
+      .replace(/,/g, '.');        // changes remaining commas to periods
+  }
+
+  function updateText() {
+    const name = nameInput.value.trim();
+    const codes = cleanCodes(codesInput.value);
+
+    badgeIn.textContent = `FTI- ${name} is badging in to -${codes}`;
+    badgeOut.textContent = `FTI- ${name} is badging out of -${codes}`;
+  }
+
+  async function copyToClipboard(text, button) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
     }
 
-    function updateText() {
-      const name = nameInput.value.trim();
-      const codes = cleanCodes(codesInput.value);
+    const old = button.textContent;
+    button.textContent = 'Copied';
+    setTimeout(() => {
+      button.textContent = old;
+    }, 1000);
+  }
 
-      badgeIn.textContent = `FTI- ${name} is badging in to -${codes}`;
-      badgeOut.textContent = `FTI- ${name} is badging out of -${codes}`;
-    }
+  nameInput.addEventListener('input', updateText);
+  codesInput.addEventListener('input', updateText);
 
-    async function copyToClipboard(text, button) {
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch (e) {
-        const temp = document.createElement('textarea');
-        temp.value = text;
-        document.body.appendChild(temp);
-        temp.select();
-        document.execCommand('copy');
-        document.body.removeChild(temp);
-      }
+  copyIn.addEventListener('click', () => copyToClipboard(badgeIn.textContent, copyIn));
+  copyOut.addEventListener('click', () => copyToClipboard(badgeOut.textContent, copyOut));
 
-      const old = button.textContent;
-      button.textContent = 'Copied';
-      setTimeout(() => {
-        button.textContent = old;
-      }, 1000);
-    }
-
-    nameInput.addEventListener('input', updateText);
-    codesInput.addEventListener('input', updateText);
-
-    copyIn.addEventListener('click', () => copyToClipboard(badgeIn.textContent, copyIn));
-    copyOut.addEventListener('click', () => copyToClipboard(badgeOut.textContent, copyOut));
-
-    updateText();
-  </script>
+  updateText();
+</script>
 </body>
 </html>
 
