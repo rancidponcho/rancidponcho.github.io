@@ -77,12 +77,12 @@
     <input id="codes" type="text" placeholder="Enter address" />
 
     <div class="row">
-      <div id="badgeIn" class="output">FTI -  is badging in to - </div>
+      <div id="badgeIn" class="output">FTI -  is badging in to </div>
       <button id="copyIn">Copy</button>
     </div>
 
     <div class="row">
-      <div id="badgeOut" class="output">FTI -  is badging out of - </div>
+      <div id="badgeOut" class="output">FTI -  is badging out of </div>
       <button id="copyOut">Copy</button>
     </div>
   </div>
@@ -106,8 +106,8 @@
     const name = nameInput.value.trim();
     const codes = cleanCodes(codesInput.value);
 
-    badgeIn.textContent = `FTI - ${name} is badging in to - ${codes}`;
-    badgeOut.textContent = `FTI - ${name} is badging out of - ${codes}`;
+    badgeIn.textContent = `FTI - ${name} is badging in to ${codes}`;
+    badgeOut.textContent = `FTI - ${name} is badging out of ${codes}`;
   }
 
   async function copyToClipboard(text, button) {
