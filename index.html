@@ -1,143 +1,609 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Badge in/out Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 24px;
-      background: #f4f4f4;
-    }
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Clock-It</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
 
-    .wrap {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 24px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    h1 {
-      margin-top: 0;
-    }
-
-    label {
-      display: block;
-      margin: 14px 0 6px;
-      font-weight: bold;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-top: 16px;
-    }
-
-    .output {
-      flex: 1;
-      padding: 10px;
-      background: #f0f0f0;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      min-height: 22px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    button {
-      padding: 10px 14px;
-      font-size: 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>Badge in/out Generator</h1>
-
-    <label for="name">Name</label>
-    <input id="name" type="text" placeholder="Enter name" />
-
-    <label for="codes">Location</label>
-    <input id="codes" type="text" placeholder="Enter address" />
-
-    <div class="row">
-      <div id="badgeIn" class="output">FTI -  is badging in to </div>
-      <button id="copyIn">Copy</button>
+  <body>
+    <div style="text-align: right;">
+      <button id="adminButton" type="button">Admin</button>
     </div>
 
-    <div class="row">
-      <div id="badgeOut" class="output">FTI -  is badging out of </div>
-      <button id="copyOut">Copy</button>
+    <h1>Clock-It</h1>
+
+    <div id="clockInPage">
+      <label for="employeeId">Employee ID:</label>
+      <input id="employeeId" type="text" autocomplete="off">
+
+      <button id="checkButton" type="button">Check Status</button>
+
+      <div id="confirmArea" style="display: none;">
+        <p id="confirmText"></p>
+        <button id="confirmButton" type="button">Confirm Punch</button>
+      </div>
+
+      <p id="status"></p>
     </div>
-  </div>
 
-<script>
-  const nameInput = document.getElementById('name');
-  const codesInput = document.getElementById('codes');
-  const badgeIn = document.getElementById('badgeIn');
-  const badgeOut = document.getElementById('badgeOut');
-  const copyIn = document.getElementById('copyIn');
-  const copyOut = document.getElementById('copyOut');
+    <div id="adminPage" style="display: none;">
+      <h1>Clock-It Admin</h1>
 
-  function cleanCodes(value) {
-    return value
-      .trim()
-      .replace(/,\s*-\s*$/, '')   // removes ",-" from the end
-      .replace(/,/g, '.');        // changes remaining commas to periods
-  }
+      <div id="loginArea">
+        <h2>Admin Login</h2>
 
-  function updateText() {
-    const name = nameInput.value.trim();
-    const codes = cleanCodes(codesInput.value);
+        <label for="pinBox">Admin PIN:</label>
+        <input id="pinBox" type="password">
 
-    badgeIn.textContent = `FTI - ${name} is badging in to ${codes}`;
-    badgeOut.textContent = `FTI - ${name} is badging out of ${codes}`;
-  }
+        <button id="loginButton" type="button">Unlock Admin</button>
 
-  async function copyToClipboard(text, button) {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (e) {
-      const temp = document.createElement('textarea');
-      temp.value = text;
-      document.body.appendChild(temp);
-      temp.select();
-      document.execCommand('copy');
-      document.body.removeChild(temp);
-    }
+        <p id="loginStatus"></p>
+      </div>
 
-    const old = button.textContent;
-    button.textContent = 'Copied';
-    setTimeout(() => {
-      button.textContent = old;
-    }, 1000);
-  }
+      <div id="adminArea" style="display: none;">
+        <h2>Admin Tools</h2>
 
-  nameInput.addEventListener('input', updateText);
-  codesInput.addEventListener('input', updateText);
+        <button id="setLocationButton" type="button">
+          Set Clock Location to This Device
+        </button>
 
-  copyIn.addEventListener('click', () => copyToClipboard(badgeIn.textContent, copyIn));
-  copyOut.addEventListener('click', () => copyToClipboard(badgeOut.textContent, copyOut));
+        <p id="locationStatus"></p>
 
-  updateText();
-</script>
-</body>
+        <hr>
+
+        <h2>Roster</h2>
+
+        <div>
+          <label for="rosterSearch">Search:</label>
+          <input id="rosterSearch" type="text" placeholder="Name, ID, or company">
+
+          <label for="statusFilter">Status:</label>
+          <select id="statusFilter">
+            <option value="ALL">All</option>
+            <option value="In">In</option>
+            <option value="Out">Out</option>
+          </select>
+
+          <button id="loadRosterButton" type="button">Load Roster</button>
+        </div>
+
+        <p id="rosterStatus"></p>
+
+        <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Company</th>
+              <th>Status</th>
+              <th>Last Punch</th>
+              <th>Last Action</th>
+              <th>Manual Action</th>
+            </tr>
+          </thead>
+          <tbody id="rosterTableBody">
+            <tr>
+              <td colspan="7">Roster not loaded.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr>
+
+        <button id="logoutButton" type="button">Log Out Admin</button>
+      </div>
+
+      <hr>
+
+      <button id="backButton" type="button">Back to Clock In</button>
+    </div>
+
+    <script>
+      const API_URL = "https://solitary-hall-c85c.fticlockit.workers.dev/";
+
+      const clockInPage = document.getElementById("clockInPage");
+      const adminPage = document.getElementById("adminPage");
+
+      const adminButton = document.getElementById("adminButton");
+      const backButton = document.getElementById("backButton");
+
+      const employeeIdBox = document.getElementById("employeeId");
+      const checkButton = document.getElementById("checkButton");
+      const confirmButton = document.getElementById("confirmButton");
+      const confirmArea = document.getElementById("confirmArea");
+      const confirmText = document.getElementById("confirmText");
+      const statusText = document.getElementById("status");
+
+      const loginArea = document.getElementById("loginArea");
+      const adminArea = document.getElementById("adminArea");
+
+      const pinBox = document.getElementById("pinBox");
+      const loginButton = document.getElementById("loginButton");
+      const loginStatus = document.getElementById("loginStatus");
+
+      const setLocationButton = document.getElementById("setLocationButton");
+      const locationStatus = document.getElementById("locationStatus");
+
+      const rosterSearch = document.getElementById("rosterSearch");
+      const statusFilter = document.getElementById("statusFilter");
+      const loadRosterButton = document.getElementById("loadRosterButton");
+      const rosterStatus = document.getElementById("rosterStatus");
+      const rosterTableBody = document.getElementById("rosterTableBody");
+
+      const logoutButton = document.getElementById("logoutButton");
+
+      let pendingPunch = null;
+      let isSavingPunch = false;
+      let adminToken = sessionStorage.getItem("clockItAdminToken") || "";
+      let rosterEmployees = [];
+      let isSavingManualPunch = false;
+
+      async function callClockItApi(action, payload) {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: action,
+            payload: payload || {}
+          })
+        });
+
+        const result = await response.json();
+
+        if (!result.ok) {
+          throw new Error(result.error || "Request failed.");
+        }
+
+        return result.data;
+      }
+
+      function showClockInPage() {
+        clockInPage.style.display = "block";
+        adminPage.style.display = "none";
+        adminButton.style.display = "inline-block";
+      }
+
+      function showAdminPage() {
+        clockInPage.style.display = "none";
+        adminPage.style.display = "block";
+        adminButton.style.display = "none";
+
+        if (adminToken) {
+          showAdminArea();
+          loadRoster();
+        } else {
+          showLoginArea();
+        }
+      }
+
+      function showAdminArea() {
+        loginArea.style.display = "none";
+        adminArea.style.display = "block";
+      }
+
+      function showLoginArea() {
+        loginArea.style.display = "block";
+        adminArea.style.display = "none";
+      }
+
+      function saveAdminToken(token) {
+        adminToken = token;
+        sessionStorage.setItem("clockItAdminToken", token);
+      }
+
+      function clearAdminToken() {
+        adminToken = "";
+        sessionStorage.removeItem("clockItAdminToken");
+      }
+
+      function handleAdminSessionError(error, statusElement) {
+        statusElement.innerText = error.message;
+
+        if (error.message.indexOf("Admin session expired") !== -1) {
+          clearAdminToken();
+          showLoginArea();
+        }
+      }
+
+      adminButton.addEventListener("click", function () {
+        showAdminPage();
+      });
+
+      backButton.addEventListener("click", function () {
+        showClockInPage();
+      });
+
+      checkButton.addEventListener("click", async function () {
+        const employeeId = employeeIdBox.value.trim();
+
+        pendingPunch = null;
+        isSavingPunch = false;
+        confirmButton.disabled = false;
+        confirmArea.style.display = "none";
+
+        if (!employeeId) {
+          statusText.innerText = "Enter your employee ID.";
+          return;
+        }
+
+        statusText.innerText = "Checking...";
+
+        try {
+          const result = await callClockItApi("clockIn_checkStatus", {
+            employeeId: employeeId
+          });
+
+          pendingPunch = {
+            id: result.id,
+            currentStatus: result.currentStatus
+          };
+
+          confirmText.innerText =
+            result.name +
+            " is currently " +
+            result.currentStatus +
+            ". Confirm " +
+            result.nextAction +
+            "?";
+
+          confirmArea.style.display = "block";
+          statusText.innerText = "";
+
+        } catch (error) {
+          statusText.innerText = error.message;
+        }
+      });
+
+      confirmButton.addEventListener("click", async function () {
+        if (isSavingPunch) {
+          return;
+        }
+
+        if (!pendingPunch) {
+          statusText.innerText = "No employee selected.";
+          return;
+        }
+
+        isSavingPunch = true;
+        confirmButton.disabled = true;
+        statusText.innerText = "Requesting location...";
+
+        let location;
+
+        try {
+          location = await getBrowserLocation();
+        } catch (error) {
+          statusText.innerText = error.message;
+          isSavingPunch = false;
+          confirmButton.disabled = false;
+          return;
+        }
+
+        statusText.innerText = "Saving punch...";
+
+        try {
+          const result = await callClockItApi("clockIn_confirmPunch", {
+            id: pendingPunch.id,
+            currentStatus: pendingPunch.currentStatus,
+            location: location
+          });
+
+          statusText.innerText = result.message;
+          confirmArea.style.display = "none";
+          employeeIdBox.value = "";
+          pendingPunch = null;
+
+        } catch (error) {
+          statusText.innerText = error.message;
+        }
+
+        isSavingPunch = false;
+        confirmButton.disabled = false;
+      });
+
+      loginButton.addEventListener("click", async function () {
+        const pin = pinBox.value.trim();
+
+        if (!pin) {
+          loginStatus.innerText = "Enter the admin PIN.";
+          return;
+        }
+
+        loginStatus.innerText = "Checking PIN...";
+        loginButton.disabled = true;
+
+        try {
+          const result = await callClockItApi("admin_login", {
+            pin: pin
+          });
+
+          saveAdminToken(result.token);
+
+          pinBox.value = "";
+          loginStatus.innerText = "";
+          showAdminArea();
+          loadRoster();
+
+        } catch (error) {
+          loginStatus.innerText = error.message;
+        }
+
+        loginButton.disabled = false;
+      });
+
+      async function loadRoster() {
+        if (!adminToken) {
+          rosterStatus.innerText = "Admin session expired. Please log in again.";
+          clearAdminToken();
+          showLoginArea();
+          return;
+        }
+
+        rosterStatus.innerText = "Loading roster...";
+        loadRosterButton.disabled = true;
+
+        try {
+          const employees = await callClockItApi("admin_getRoster", {
+            adminToken: adminToken
+          });
+
+          rosterEmployees = employees || [];
+          renderRoster();
+
+          rosterStatus.innerText =
+            rosterEmployees.length + " employee" +
+            (rosterEmployees.length === 1 ? "" : "s") +
+            " loaded.";
+
+        } catch (error) {
+          handleAdminSessionError(error, rosterStatus);
+        }
+
+        loadRosterButton.disabled = false;
+      }
+
+      function renderRoster() {
+        const searchText = rosterSearch.value.trim().toLowerCase();
+        const selectedStatus = statusFilter.value;
+
+        const filteredEmployees = rosterEmployees.filter(function (employee) {
+          const matchesStatus =
+            selectedStatus === "ALL" ||
+            employee.currentStatus === selectedStatus;
+
+          const searchBlob = [
+            employee.id,
+            employee.name,
+            employee.company,
+            employee.currentStatus,
+            employee.lastPunchTime,
+            employee.lastAction
+          ].join(" ").toLowerCase();
+
+          const matchesSearch =
+            !searchText || searchBlob.indexOf(searchText) !== -1;
+
+          return matchesStatus && matchesSearch;
+        });
+
+        if (filteredEmployees.length === 0) {
+          rosterTableBody.innerHTML =
+            '<tr><td colspan="7">No employees found.</td></tr>';
+          return;
+        }
+
+        rosterTableBody.innerHTML = filteredEmployees.map(function (employee) {
+          const actionLabel =
+            employee.nextAction === "CLOCK_IN" ? "Clock In" : "Clock Out";
+
+          const actionButton = employee.canManualPunch
+            ? '<button type="button" class="manualPunchButton" ' +
+                'data-id="' + escapeHtml(employee.id) + '" ' +
+                'data-name="' + escapeHtml(employee.name) + '" ' +
+                'data-status="' + escapeHtml(employee.currentStatus) + '" ' +
+                'data-action-label="' + escapeHtml(actionLabel) + '">' +
+                escapeHtml(actionLabel) +
+              '</button>'
+            : '<span title="' + escapeHtml(employee.statusError) + '">Invalid status</span>';
+
+          return (
+            "<tr>" +
+              "<td>" + escapeHtml(employee.id) + "</td>" +
+              "<td>" + escapeHtml(employee.name) + "</td>" +
+              "<td>" + escapeHtml(employee.company) + "</td>" +
+              "<td>" + escapeHtml(employee.currentStatus) + "</td>" +
+              "<td>" + escapeHtml(employee.lastPunchTime || "--") + "</td>" +
+              "<td>" + escapeHtml(employee.lastAction || "--") + "</td>" +
+              "<td>" + actionButton + "</td>" +
+            "</tr>"
+          );
+        }).join("");
+      }
+
+      setLocationButton.addEventListener("click", async function () {
+        if (!adminToken) {
+          locationStatus.innerText = "Admin session expired. Please log in again.";
+          clearAdminToken();
+          showLoginArea();
+          return;
+        }
+
+        setLocationButton.disabled = true;
+        locationStatus.innerText = "Requesting location...";
+
+        let location;
+
+        try {
+          location = await getBrowserLocation();
+        } catch (error) {
+          locationStatus.innerText = error.message;
+          setLocationButton.disabled = false;
+          return;
+        }
+
+        locationStatus.innerText = "Saving clock location...";
+
+        try {
+          const result = await callClockItApi("admin_setClockLocation", {
+            adminToken: adminToken,
+            location: location
+          });
+
+          locationStatus.innerText =
+            result.message +
+            " Latitude: " +
+            result.latitude +
+            ", Longitude: " +
+            result.longitude +
+            ", Accuracy: " +
+            Math.round(result.accuracy) +
+            " meters.";
+
+        } catch (error) {
+          handleAdminSessionError(error, locationStatus);
+        }
+
+        setLocationButton.disabled = false;
+      });
+
+      loadRosterButton.addEventListener("click", function () {
+        loadRoster();
+      });
+
+      rosterSearch.addEventListener("input", function () {
+        renderRoster();
+      });
+
+      statusFilter.addEventListener("change", function () {
+        renderRoster();
+      });
+
+      rosterTableBody.addEventListener("click", function (event) {
+        if (!event.target.classList.contains("manualPunchButton")) {
+          return;
+        }
+
+        manualPunch(
+          event.target.dataset.id,
+          event.target.dataset.name,
+          event.target.dataset.status,
+          event.target.dataset.actionLabel
+        );
+      });
+
+      async function manualPunch(employeeId, employeeName, expectedCurrentStatus, actionLabel) {
+        if (isSavingManualPunch) {
+          return;
+        }
+
+        if (!adminToken) {
+          rosterStatus.innerText = "Admin session expired. Please log in again.";
+          clearAdminToken();
+          showLoginArea();
+          return;
+        }
+
+        const confirmed = confirm(
+          "Manually " + actionLabel + " " + employeeName + "?"
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        const note = prompt(
+          "Optional note for this manual punch:",
+          "Manual admin correction"
+        );
+
+        if (note === null) {
+          return;
+        }
+
+        isSavingManualPunch = true;
+        rosterStatus.innerText = "Saving manual punch...";
+
+        try {
+          const result = await callClockItApi("admin_manualPunch", {
+            adminToken: adminToken,
+            employeeId: employeeId,
+            expectedCurrentStatus: expectedCurrentStatus,
+            note: note
+          });
+
+          rosterStatus.innerText = result.message;
+          loadRoster();
+
+        } catch (error) {
+          handleAdminSessionError(error, rosterStatus);
+        }
+
+        isSavingManualPunch = false;
+      }
+
+      logoutButton.addEventListener("click", function () {
+        clearAdminToken();
+        rosterEmployees = [];
+        locationStatus.innerText = "";
+        rosterStatus.innerText = "";
+        rosterTableBody.innerHTML =
+          '<tr><td colspan="7">Roster not loaded.</td></tr>';
+        loginStatus.innerText = "Logged out.";
+        showLoginArea();
+      });
+
+      function getBrowserLocation() {
+        return new Promise(function (resolve, reject) {
+          if (!navigator.geolocation) {
+            reject(new Error("This browser does not support location services."));
+            return;
+          }
+
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              resolve({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy,
+                capturedAt: new Date(position.timestamp).toISOString(),
+                device: navigator.userAgent
+              });
+            },
+            function (error) {
+              let message = "Could not get your location.";
+
+              if (error.code === error.PERMISSION_DENIED) {
+                message = "Location permission was denied. Location is required to punch in or out.";
+              } else if (error.code === error.POSITION_UNAVAILABLE) {
+                message = "Your location is currently unavailable.";
+              } else if (error.code === error.TIMEOUT) {
+                message = "Location request timed out. Please try again.";
+              }
+
+              reject(new Error(message));
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 15000,
+              maximumAge: 0
+            }
+          );
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      showClockInPage();
+    </script>
+  </body>
 </html>
-
-
