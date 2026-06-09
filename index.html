@@ -161,6 +161,7 @@
       let adminToken = sessionStorage.getItem("clockItAdminToken") || "";
       let rosterEmployees = [];
       let isSavingManualPunch = false;
+      let isSavingBulkPunch = false;
 
       async function callClockItApi(action, payload) {
         let response;
