@@ -15,7 +15,14 @@
 
     <div id="clockInPage">
       <label for="employeeId">Employee ID:</label>
-      <input id="employeeId" type="text" autocomplete="off">
+      <input
+        id="employeeId"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="5"
+        autocomplete="off"
+      >
 
       <button id="checkButton" type="button">Check Status</button>
 
@@ -34,7 +41,12 @@
         <h2>Admin Login</h2>
 
         <label for="pinBox">Admin PIN:</label>
-        <input id="pinBox" type="password">
+        <input
+          id="pinBox"
+          type="password"
+          inputmode="numeric"
+          autocomplete="off"
+        >
 
         <button id="loginButton" type="button">Unlock Admin</button>
 
@@ -100,7 +112,7 @@
     </div>
 
     <script>
-      const API_URL = "https://solitary-hall-c85c.fticlockit.workers.dev/";
+      const API_URL = "https://solitary-hall-c85c.fticlockit.workers.dev";
 
       const clockInPage = document.getElementById("clockInPage");
       const adminPage = document.getElementById("adminPage");
@@ -140,18 +152,34 @@
       let isSavingManualPunch = false;
 
       async function callClockItApi(action, payload) {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            action: action,
-            payload: payload || {}
-          })
-        });
+        let response;
 
-        const result = await response.json();
+        try {
+          response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              action: action,
+              payload: payload || {}
+            })
+          });
+        } catch (error) {
+          throw new Error("Could not reach Clock-It server. Check your connection and try again.");
+        }
+
+        let result;
+
+        try {
+          result = await response.json();
+        } catch (error) {
+          throw new Error("Clock-It server returned an invalid response.");
+        }
+
+        if (!response.ok) {
+          throw new Error(result.error || "Clock-It server request failed.");
+        }
 
         if (!result.ok) {
           throw new Error(result.error || "Request failed.");
@@ -164,6 +192,8 @@
         clockInPage.style.display = "block";
         adminPage.style.display = "none";
         adminButton.style.display = "inline-block";
+
+        statusText.innerText = "";
       }
 
       function showAdminPage() {
@@ -208,12 +238,36 @@
         }
       }
 
+      function formatActionLabel(action) {
+        if (action === "CLOCK_IN") {
+          return "Clock In";
+        }
+
+        if (action === "CLOCK_OUT") {
+          return "Clock Out";
+        }
+
+        return action || "Punch";
+      }
+
       adminButton.addEventListener("click", function () {
         showAdminPage();
       });
 
       backButton.addEventListener("click", function () {
         showClockInPage();
+      });
+
+      employeeIdBox.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          checkButton.click();
+        }
+      });
+
+      pinBox.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          loginButton.click();
+        }
       });
 
       checkButton.addEventListener("click", async function () {
@@ -229,6 +283,7 @@
           return;
         }
 
+        checkButton.disabled = true;
         statusText.innerText = "Checking...";
 
         try {
@@ -246,7 +301,7 @@
             " is currently " +
             result.currentStatus +
             ". Confirm " +
-            result.nextAction +
+            formatActionLabel(result.nextAction) +
             "?";
 
           confirmArea.style.display = "block";
@@ -254,6 +309,9 @@
 
         } catch (error) {
           statusText.innerText = error.message;
+
+        } finally {
+          checkButton.disabled = false;
         }
       });
 
@@ -298,10 +356,11 @@
 
         } catch (error) {
           statusText.innerText = error.message;
-        }
 
-        isSavingPunch = false;
-        confirmButton.disabled = false;
+        } finally {
+          isSavingPunch = false;
+          confirmButton.disabled = false;
+        }
       });
 
       loginButton.addEventListener("click", async function () {
@@ -329,9 +388,10 @@
 
         } catch (error) {
           loginStatus.innerText = error.message;
-        }
 
-        loginButton.disabled = false;
+        } finally {
+          loginButton.disabled = false;
+        }
       });
 
       async function loadRoster() {
@@ -360,9 +420,10 @@
 
         } catch (error) {
           handleAdminSessionError(error, rosterStatus);
-        }
 
-        loadRosterButton.disabled = false;
+        } finally {
+          loadRosterButton.disabled = false;
+        }
       }
 
       function renderRoster() {
@@ -396,8 +457,7 @@
         }
 
         rosterTableBody.innerHTML = filteredEmployees.map(function (employee) {
-          const actionLabel =
-            employee.nextAction === "CLOCK_IN" ? "Clock In" : "Clock Out";
+          const actionLabel = formatActionLabel(employee.nextAction);
 
           const actionButton = employee.canManualPunch
             ? '<button type="button" class="manualPunchButton" ' +
@@ -464,9 +524,10 @@
 
         } catch (error) {
           handleAdminSessionError(error, locationStatus);
-        }
 
-        setLocationButton.disabled = false;
+        } finally {
+          setLocationButton.disabled = false;
+        }
       });
 
       loadRosterButton.addEventListener("click", function () {
@@ -539,9 +600,10 @@
 
         } catch (error) {
           handleAdminSessionError(error, rosterStatus);
-        }
 
-        isSavingManualPunch = false;
+        } finally {
+          isSavingManualPunch = false;
+        }
       }
 
       logoutButton.addEventListener("click", function () {
