@@ -282,13 +282,25 @@
         }
       });
 
-      bulkClockInButton.addEventListener("click", function () {
-        bulkManualPunch("CLOCK_IN");
-      });
+      if (bulkClockInButton) {
+        bulkClockInButton.addEventListener("click", function () {
+          if (bulkStatus) {
+            bulkStatus.innerText = "Clock In Selected clicked...";
+          }
       
-      bulkClockOutButton.addEventListener("click", function () {
-        bulkManualPunch("CLOCK_OUT");
-      });
+          bulkManualPunch("CLOCK_IN");
+        });
+      }
+      
+      if (bulkClockOutButton) {
+        bulkClockOutButton.addEventListener("click", function () {
+          if (bulkStatus) {
+            bulkStatus.innerText = "Clock Out Selected clicked...";
+          }
+      
+          bulkManualPunch("CLOCK_OUT");
+        });
+      }
 
       checkButton.addEventListener("click", async function () {
         const employeeId = employeeIdBox.value.trim();
@@ -568,17 +580,19 @@
       statusFilter.addEventListener("change", function () {
         renderRoster();
       });
-
+      
       rosterTableBody.addEventListener("click", function (event) {
-        if (!event.target.classList.contains("manualPunchButton")) {
+        const button = event.target.closest(".manualPunchButton");
+      
+        if (!button) {
           return;
         }
-
+      
         manualPunch(
-          event.target.dataset.id,
-          event.target.dataset.name,
-          event.target.dataset.status,
-          event.target.dataset.actionLabel
+          button.dataset.id,
+          button.dataset.name,
+          button.dataset.status,
+          button.dataset.actionLabel
         );
       });
 
@@ -795,6 +809,8 @@
           .replace(/'/g, "&#039;");
       }
 
+      console.log("Clock-It frontend loaded: bulk punch version 1");
+      
       showClockInPage();
     </script>
   </body>
