@@ -80,11 +80,18 @@
           <button id="loadRosterButton" type="button">Load Roster</button>
         </div>
 
+        <div style="margin: 12px 0;">
+          <button id="bulkClockInButton" type="button">Clock In Selected</button>
+          <button id="bulkClockOutButton" type="button">Clock Out Selected</button>
+          <span id="bulkStatus"></span>
+        </div>
+        
         <p id="rosterStatus"></p>
-
+        
         <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%;">
           <thead>
             <tr>
+              <th>Select</th>
               <th>ID</th>
               <th>Name</th>
               <th>Company</th>
@@ -96,7 +103,7 @@
           </thead>
           <tbody id="rosterTableBody">
             <tr>
-              <td colspan="7">Roster not loaded.</td>
+              <td colspan="8">Roster not loaded.</td>
             </tr>
           </tbody>
         </table>
@@ -142,6 +149,10 @@
       const loadRosterButton = document.getElementById("loadRosterButton");
       const rosterStatus = document.getElementById("rosterStatus");
       const rosterTableBody = document.getElementById("rosterTableBody");
+      
+      const bulkClockInButton = document.getElementById("bulkClockInButton");
+      const bulkClockOutButton = document.getElementById("bulkClockOutButton");
+      const bulkStatus = document.getElementById("bulkStatus");
 
       const logoutButton = document.getElementById("logoutButton");
 
@@ -268,6 +279,14 @@
         if (event.key === "Enter") {
           loginButton.click();
         }
+      });
+
+      bulkClockInButton.addEventListener("click", function () {
+        bulkManualPunch("CLOCK_IN");
+      });
+      
+      bulkClockOutButton.addEventListener("click", function () {
+        bulkManualPunch("CLOCK_OUT");
       });
 
       checkButton.addEventListener("click", async function () {
@@ -452,7 +471,7 @@
 
         if (filteredEmployees.length === 0) {
           rosterTableBody.innerHTML =
-            '<tr><td colspan="7">No employees found.</td></tr>';
+            '<tr><td colspan="8">No employees found.</td></tr>';
           return;
         }
 
@@ -469,8 +488,15 @@
               '</button>'
             : '<span title="' + escapeHtml(employee.statusError) + '">Invalid status</span>';
 
+          const checkbox = employee.canManualPunch
+            ? '<input type="checkbox" class="rosterSelectBox" ' +
+                'data-id="' + escapeHtml(employee.id) + '" ' +
+                'data-name="' + escapeHtml(employee.name) + '">' 
+            : "";
+          
           return (
             "<tr>" +
+              "<td>" + checkbox + "</td>" +
               "<td>" + escapeHtml(employee.id) + "</td>" +
               "<td>" + escapeHtml(employee.name) + "</td>" +
               "<td>" + escapeHtml(employee.company) + "</td>" +
@@ -603,6 +629,109 @@
 
         } finally {
           isSavingManualPunch = false;
+        }
+      }
+
+      function getSelectedRosterEmployees() {
+        return Array.from(
+          document.querySelectorAll(".rosterSelectBox:checked")
+        ).map(function (checkbox) {
+          return {
+            id: checkbox.dataset.id,
+            name: checkbox.dataset.name
+          };
+        });
+      }
+      
+      async function bulkManualPunch(action) {
+        if (isSavingBulkPunch) {
+          return;
+        }
+      
+        if (!adminToken) {
+          bulkStatus.innerText = "Admin session expired. Please log in again.";
+          clearAdminToken();
+          showLoginArea();
+          return;
+        }
+      
+        const selectedEmployees = getSelectedRosterEmployees();
+      
+        if (selectedEmployees.length === 0) {
+          bulkStatus.innerText = "Select at least one employee.";
+          return;
+        }
+      
+        const actionLabel = formatActionLabel(action);
+      
+        const confirmed = confirm(
+          actionLabel +
+          " " +
+          selectedEmployees.length +
+          " selected employee" +
+          (selectedEmployees.length === 1 ? "" : "s") +
+          "?"
+        );
+      
+        if (!confirmed) {
+          return;
+        }
+      
+        const note = prompt(
+          "Optional note for this bulk punch:",
+          "Bulk admin correction"
+        );
+      
+        if (note === null) {
+          return;
+        }
+      
+        isSavingBulkPunch = true;
+        bulkClockInButton.disabled = true;
+        bulkClockOutButton.disabled = true;
+        bulkStatus.innerText = "Saving bulk punch...";
+      
+        try {
+          const result = await callClockItApi("admin_bulkManualPunch", {
+            adminToken: adminToken,
+            employeeIds: selectedEmployees.map(function (employee) {
+              return employee.id;
+            }),
+            action: action,
+            note: note
+          });
+      
+          let message = result.message;
+      
+          const failedResults = (result.results || []).filter(function (item) {
+            return !item.ok;
+          });
+      
+          if (failedResults.length > 0) {
+            message +=
+              " Issues: " +
+              failedResults
+                .slice(0, 5)
+                .map(function (item) {
+                  return item.message;
+                })
+                .join(" | ");
+      
+            if (failedResults.length > 5) {
+              message += " | +" + (failedResults.length - 5) + " more.";
+            }
+          }
+      
+          bulkStatus.innerText = message;
+          loadRoster();
+      
+        } catch (error) {
+          handleAdminSessionError(error, bulkStatus);
+      
+        } finally {
+          isSavingBulkPunch = false;
+          bulkClockInButton.disabled = false;
+          bulkClockOutButton.disabled = false;
         }
       }
 
