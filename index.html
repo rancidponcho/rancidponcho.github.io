@@ -81,8 +81,18 @@
         </div>
 
         <div style="margin: 12px 0;">
+          <label for="bulkNote">Bulk note:</label>
+          <input
+            id="bulkNote"
+            type="text"
+            placeholder="Optional note"
+            value="Bulk admin correction"
+            style="min-width: 220px;"
+          >
+        
           <button id="bulkClockInButton" type="button">Clock In Selected</button>
           <button id="bulkClockOutButton" type="button">Clock Out Selected</button>
+        
           <span id="bulkStatus"></span>
         </div>
         
@@ -150,6 +160,7 @@
       const rosterStatus = document.getElementById("rosterStatus");
       const rosterTableBody = document.getElementById("rosterTableBody");
       
+      const bulkNote = document.getElementById("bulkNote");
       const bulkClockInButton = document.getElementById("bulkClockInButton");
       const bulkClockOutButton = document.getElementById("bulkClockOutButton");
       const bulkStatus = document.getElementById("bulkStatus");
@@ -283,21 +294,13 @@
       });
 
       if (bulkClockInButton) {
-        bulkClockInButton.addEventListener("click", function () {
-          if (bulkStatus) {
-            bulkStatus.innerText = "Clock In Selected clicked...";
-          }
-      
+        bulkClockInButton.addEventListener("click", function () {      
           bulkManualPunch("CLOCK_IN");
         });
       }
       
       if (bulkClockOutButton) {
-        bulkClockOutButton.addEventListener("click", function () {
-          if (bulkStatus) {
-            bulkStatus.innerText = "Clock Out Selected clicked...";
-          }
-      
+        bulkClockOutButton.addEventListener("click", function () {      
           bulkManualPunch("CLOCK_OUT");
         });
       }
@@ -678,33 +681,19 @@
         }
       
         const actionLabel = formatActionLabel(action);
-      
-        const confirmed = confirm(
-          actionLabel +
-          " " +
-          selectedEmployees.length +
-          " selected employee" +
-          (selectedEmployees.length === 1 ? "" : "s") +
-          "?"
-        );
-      
-        if (!confirmed) {
-          return;
-        }
-      
-        const note = prompt(
-          "Optional note for this bulk punch:",
-          "Bulk admin correction"
-        );
-      
-        if (note === null) {
-          return;
-        }
+        const note = bulkNote ? bulkNote.value.trim() : "";
       
         isSavingBulkPunch = true;
         bulkClockInButton.disabled = true;
         bulkClockOutButton.disabled = true;
-        bulkStatus.innerText = "Saving bulk punch...";
+      
+        bulkStatus.innerText =
+          actionLabel +
+          " selected: saving " +
+          selectedEmployees.length +
+          " employee" +
+          (selectedEmployees.length === 1 ? "" : "s") +
+          "...";
       
         try {
           const result = await callClockItApi("admin_bulkManualPunch", {
