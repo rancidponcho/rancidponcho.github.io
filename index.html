@@ -603,68 +603,6 @@
         if (isSavingManualPunch) {
           return;
         }
-
-        if (!adminToken) {
-          rosterStatus.innerText = "Admin session expired. Please log in again.";
-          clearAdminToken();
-          showLoginArea();
-          return;
-        }
-
-        const confirmed = confirm(
-          "Manually " + actionLabel + " " + employeeName + "?"
-        );
-
-        if (!confirmed) {
-          return;
-        }
-
-        const note = prompt(
-          "Optional note for this manual punch:",
-          "Manual admin correction"
-        );
-
-        if (note === null) {
-          return;
-        }
-
-        isSavingManualPunch = true;
-        rosterStatus.innerText = "Saving manual punch...";
-
-        try {
-          const result = await callClockItApi("admin_manualPunch", {
-            adminToken: adminToken,
-            employeeId: employeeId,
-            expectedCurrentStatus: expectedCurrentStatus,
-            note: note
-          });
-
-          rosterStatus.innerText = result.message;
-          loadRoster();
-
-        } catch (error) {
-          handleAdminSessionError(error, rosterStatus);
-
-        } finally {
-          isSavingManualPunch = false;
-        }
-      }
-
-      function getSelectedRosterEmployees() {
-        return Array.from(
-          document.querySelectorAll(".rosterSelectBox:checked")
-        ).map(function (checkbox) {
-          return {
-            id: checkbox.dataset.id,
-            name: checkbox.dataset.name
-          };
-        });
-      }
-      
-      async function manualPunch(employeeId, employeeName, expectedCurrentStatus, actionLabel) {
-        if (isSavingManualPunch) {
-          return;
-        }
       
         if (!adminToken) {
           rosterStatus.innerText = "Admin session expired. Please log in again.";
@@ -695,6 +633,95 @@
       
         } finally {
           isSavingManualPunch = false;
+        }
+      }
+      
+      function getSelectedRosterEmployees() {
+        return Array.from(
+          document.querySelectorAll(".rosterSelectBox:checked")
+        ).map(function (checkbox) {
+          return {
+            id: checkbox.dataset.id,
+            name: checkbox.dataset.name
+          };
+        });
+      }
+      
+      async function bulkManualPunch(action) {
+        if (isSavingBulkPunch) {
+          return;
+        }
+      
+        if (!adminToken) {
+          bulkStatus.innerText = "Admin session expired. Please log in again.";
+          clearAdminToken();
+          showLoginArea();
+          return;
+        }
+      
+        const selectedEmployees = getSelectedRosterEmployees();
+      
+        if (selectedEmployees.length === 0) {
+          bulkStatus.innerText = "Select at least one employee.";
+          return;
+        }
+      
+        const actionLabel = formatActionLabel(action);
+        const note = bulkNote ? bulkNote.value.trim() : "Bulk admin correction";
+      
+        isSavingBulkPunch = true;
+        bulkClockInButton.disabled = true;
+        bulkClockOutButton.disabled = true;
+      
+        bulkStatus.innerText =
+          actionLabel +
+          " selected: saving " +
+          selectedEmployees.length +
+          " employee" +
+          (selectedEmployees.length === 1 ? "" : "s") +
+          "...";
+      
+        try {
+          const result = await callClockItApi("admin_bulkManualPunch", {
+            adminToken: adminToken,
+            employeeIds: selectedEmployees.map(function (employee) {
+              return employee.id;
+            }),
+            action: action,
+            note: note
+          });
+      
+          let message = result.message;
+      
+          const failedResults = (result.results || []).filter(function (item) {
+            return !item.ok;
+          });
+      
+          if (failedResults.length > 0) {
+            message +=
+              " Issues: " +
+              failedResults
+                .slice(0, 5)
+                .map(function (item) {
+                  return item.message;
+                })
+                .join(" | ");
+      
+            if (failedResults.length > 5) {
+              message += " | +" + (failedResults.length - 5) + " more.";
+            }
+          }
+      
+          bulkStatus.innerText = message;
+          loadRoster();
+      
+        } catch (error) {
+          handleAdminSessionError(error, bulkStatus);
+      
+        } finally {
+          isSavingBulkPunch = false;
+          bulkClockInButton.disabled = false;
+          bulkClockOutButton.disabled = false;
         }
       }
 
