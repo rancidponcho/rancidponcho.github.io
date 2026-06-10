@@ -81,7 +81,7 @@
         </div>
 
         <div style="margin: 12px 0;">
-          <label for="bulkNote">Bulk note:</label>
+          <label for="bulkNote">Admin note:</label>
           <input
             id="bulkNote"
             type="text"
@@ -661,81 +661,40 @@
         });
       }
       
-      async function bulkManualPunch(action) {
-        if (isSavingBulkPunch) {
+      async function manualPunch(employeeId, employeeName, expectedCurrentStatus, actionLabel) {
+        if (isSavingManualPunch) {
           return;
         }
       
         if (!adminToken) {
-          bulkStatus.innerText = "Admin session expired. Please log in again.";
+          rosterStatus.innerText = "Admin session expired. Please log in again.";
           clearAdminToken();
           showLoginArea();
           return;
         }
       
-        const selectedEmployees = getSelectedRosterEmployees();
+        const note = bulkNote ? bulkNote.value.trim() : "Manual admin correction";
       
-        if (selectedEmployees.length === 0) {
-          bulkStatus.innerText = "Select at least one employee.";
-          return;
-        }
-      
-        const actionLabel = formatActionLabel(action);
-        const note = bulkNote ? bulkNote.value.trim() : "";
-      
-        isSavingBulkPunch = true;
-        bulkClockInButton.disabled = true;
-        bulkClockOutButton.disabled = true;
-      
-        bulkStatus.innerText =
-          actionLabel +
-          " selected: saving " +
-          selectedEmployees.length +
-          " employee" +
-          (selectedEmployees.length === 1 ? "" : "s") +
-          "...";
+        isSavingManualPunch = true;
+        rosterStatus.innerText =
+          actionLabel + " " + employeeName + ": saving...";
       
         try {
-          const result = await callClockItApi("admin_bulkManualPunch", {
+          const result = await callClockItApi("admin_manualPunch", {
             adminToken: adminToken,
-            employeeIds: selectedEmployees.map(function (employee) {
-              return employee.id;
-            }),
-            action: action,
+            employeeId: employeeId,
+            expectedCurrentStatus: expectedCurrentStatus,
             note: note
           });
       
-          let message = result.message;
-      
-          const failedResults = (result.results || []).filter(function (item) {
-            return !item.ok;
-          });
-      
-          if (failedResults.length > 0) {
-            message +=
-              " Issues: " +
-              failedResults
-                .slice(0, 5)
-                .map(function (item) {
-                  return item.message;
-                })
-                .join(" | ");
-      
-            if (failedResults.length > 5) {
-              message += " | +" + (failedResults.length - 5) + " more.";
-            }
-          }
-      
-          bulkStatus.innerText = message;
+          rosterStatus.innerText = result.message;
           loadRoster();
       
         } catch (error) {
-          handleAdminSessionError(error, bulkStatus);
+          handleAdminSessionError(error, rosterStatus);
       
         } finally {
-          isSavingBulkPunch = false;
-          bulkClockInButton.disabled = false;
-          bulkClockOutButton.disabled = false;
+          isSavingManualPunch = false;
         }
       }
 
